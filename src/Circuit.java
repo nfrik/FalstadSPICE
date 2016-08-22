@@ -39,7 +39,7 @@ public class Circuit extends Applet implements ComponentListener {
 	ogf = new CirSim(null);
 	ogf.init();
     }
-    
+
     public void showFrame() {
 	if ( finished )
 	{
@@ -63,7 +63,7 @@ public class Circuit extends Applet implements ComponentListener {
     }
 
     public void toggleSwitch(int x) { ogf.toggleSwitch(x); }
-    
+
     public void paint(Graphics g) {
 	String s = "Applet is open in a separate window.";
 	if ( ogf != null && !ogf.isVisible() )
@@ -76,7 +76,7 @@ public class Circuit extends Applet implements ComponentListener {
 	    ogf.triggerShow();
 	g.drawString(s, 10, 30);
     }
-    
+
     public void componentHidden(ComponentEvent e){}
     public void componentMoved(ComponentEvent e){}
     public void componentShown(ComponentEvent e) { showFrame(); }
@@ -84,7 +84,7 @@ public class Circuit extends Applet implements ComponentListener {
 	if (ogf != null)
 	    ogf.componentResized(e);
     }
-    
+
     public void destroy() {
 	if (ogf != null)
 	    ogf.dispose();

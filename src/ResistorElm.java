@@ -23,7 +23,7 @@ import java.util.StringTokenizer;
 	}
 	
 	void draw(Graphics g) {
-	    int segments = 16;
+	    int segments = 6;
 	    int i;
 	    int ox = 0;
 	    int hs = sim.euroResistorCheckItem.getState() ? 6 : 8;

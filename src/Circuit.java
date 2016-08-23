@@ -24,72 +24,82 @@ public class Circuit extends Applet implements ComponentListener {
     boolean finished = false;
 
     void destroyFrame() {
-	if (ogf != null)
-	    ogf.dispose();
-	ogf = null;
-	repaint();
-	finished = true;
+        if (ogf != null)
+            ogf.dispose();
+        ogf = null;
+        repaint();
+        finished = true;
     }
+
     boolean started = false;
+
     public void init() {
-	addComponentListener(this);
+        addComponentListener(this);
     }
 
     public static void main(String args[]) {
-	ogf = new CirSim(null);
-	ogf.init();
+        ogf = new CirSim(null);
+        ogf.init();
     }
 
     public void showFrame() {
-	if ( finished )
-	{
-	    repaint();
-	    return;
-	}
-	if (ogf == null) {
-	    started = true;
-	    ogf = new CirSim(this);
-	    ogf.init();
-	}
-	ogf.setVisible(true);
-	repaint();
+        if (finished) {
+            repaint();
+            return;
+        }
+        if (ogf == null) {
+            started = true;
+            ogf = new CirSim(this);
+            ogf.init();
+        }
+        ogf.setVisible(true);
+        repaint();
     }
 
     public void hideFrame() {
-	if ( finished )
-	    return;
-	ogf.setVisible(false);
-	repaint();
+        if (finished)
+            return;
+        ogf.setVisible(false);
+        repaint();
     }
 
-    public void toggleSwitch(int x) { ogf.toggleSwitch(x); }
+    public void toggleSwitch(int x) {
+        ogf.toggleSwitch(x);
+    }
 
     public void paint(Graphics g) {
-	String s = "Applet is open in a separate window.";
-	if ( ogf != null && !ogf.isVisible() )
-	    s = "Applet window is hidden.";
-	if (!started)
-	    s = "Applet is starting.";
-	else if (ogf == null || finished)
-	    s = "Applet is finished.";
-	else if (ogf != null && ogf.useFrame)
-	    ogf.triggerShow();
-	g.drawString(s, 10, 30);
+        String s = "Applet is open in a separate window.";
+        if (ogf != null && !ogf.isVisible())
+            s = "Applet window is hidden.";
+        if (!started)
+            s = "Applet is starting.";
+        else if (ogf == null || finished)
+            s = "Applet is finished.";
+        else if (ogf != null && ogf.useFrame)
+            ogf.triggerShow();
+        g.drawString(s, 10, 30);
     }
 
-    public void componentHidden(ComponentEvent e){}
-    public void componentMoved(ComponentEvent e){}
-    public void componentShown(ComponentEvent e) { showFrame(); }
+    public void componentHidden(ComponentEvent e) {
+    }
+
+    public void componentMoved(ComponentEvent e) {
+    }
+
+    public void componentShown(ComponentEvent e) {
+        showFrame();
+    }
+
     public void componentResized(ComponentEvent e) {
-	if (ogf != null)
-	    ogf.componentResized(e);
+        if (ogf != null)
+            ogf.componentResized(e);
     }
 
     public void destroy() {
-	if (ogf != null)
-	    ogf.dispose();
-	ogf = null;
-	repaint();
+        if (ogf != null)
+            ogf.dispose();
+        ogf = null;
+        repaint();
     }
 };
 

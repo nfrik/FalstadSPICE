@@ -1,4 +1,5 @@
-import java.awt.*;
+
+import java.awt.Graphics;
 import java.util.StringTokenizer;
 
     class VCOElm extends ChipElm {
@@ -7,7 +8,9 @@ import java.util.StringTokenizer;
 		      StringTokenizer st) {
 	    super(xa, ya, xb, yb, f, st);
 	}
+	@Override
 	String getChipName() { return "VCO"; }
+	@Override
 	void setupPins() {
 	    sizeX = 2;
 	    sizeY = 4;
@@ -22,7 +25,9 @@ import java.util.StringTokenizer;
 	    pins[5] = new Pin(3, SIDE_E, "R2");
 	    pins[5].output = true;
 	}
+	@Override
 	boolean nonLinear() { return true; }
+	@Override
 	void stamp() {
 	    // output pin
 	    sim.stampVoltageSource(0, nodes[1], pins[1].voltSource);
@@ -39,6 +44,7 @@ import java.util.StringTokenizer;
 	final double cResistance = 1e6;
 	double cCurrent;
 	int cDir;
+	@Override
 	void doStep() {
 	    double vc = volts[3]-volts[2];
 	    double vo = volts[1];
@@ -70,18 +76,22 @@ import java.util.StringTokenizer;
         // we get pins[4].current and pins[5].current, which we need
 	void computeCurrent() {
 	    if (cResistance == 0)
-		return;
+		return ;
 	    double c = cDir*(pins[4].current + pins[5].current) +
 		(volts[3]-volts[2])/cResistance;
 	    pins[2].current = -c;
 	    pins[3].current = c;
 	    pins[0].current = -pins[4].current;
 	}
+	@Override
 	void draw(Graphics g) {
 	    computeCurrent();
 	    drawChip(g);
 	}
+	@Override
 	int getPostCount() { return 6; }
+	@Override
 	int getVoltageSourceCount() { return 3; }
+	@Override
 	int getDumpType() { return 158; }
     }

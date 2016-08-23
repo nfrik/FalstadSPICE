@@ -1,4 +1,7 @@
-import java.awt.*;
+
+import java.awt.Checkbox;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.util.StringTokenizer;
 
     class LogicOutputElm extends CircuitElm {
@@ -20,18 +23,23 @@ import java.util.StringTokenizer;
 		threshold = 2.5;
 	    }
 	}
+	@Override
 	String dump() {
 	    return super.dump() + " " + threshold;
 	}
+	@Override
 	int getDumpType() { return 'M'; }
+	@Override
 	int getPostCount() { return 1; }
 	boolean isTernary() { return (flags & FLAG_TERNARY) != 0; }
 	boolean isNumeric() { return (flags & (FLAG_TERNARY|FLAG_NUMERIC)) != 0; }
 	boolean needsPullDown() { return (flags & FLAG_PULLDOWN) != 0; }
+	@Override
 	void setPoints() {
 	    super.setPoints();
 	    lead1 = interpPoint(point1, point2, 1-12/dn);
 	}
+	@Override
 	void draw(Graphics g) {
 	    Font f = new Font("SansSerif", Font.BOLD, 20);
 	    g.setFont(f);
@@ -54,11 +62,14 @@ import java.util.StringTokenizer;
 	    drawThickLine(g, point1, lead1);
 	    drawPosts(g);
 	}
+	@Override
 	void stamp() {
 	    if (needsPullDown())
 		sim.stampResistor(nodes[0], 0, 1e6);
 	}
+	@Override
 	double getVoltageDiff() { return volts[0]; }
+	@Override
 	void getInfo(String arr[]) {
 	    arr[0] = "logic output";
 	    arr[1] = (volts[0] < threshold) ? "low" : "high";
@@ -66,6 +77,7 @@ import java.util.StringTokenizer;
 		arr[1] = value;
 	    arr[2] = "V = " + getVoltageText(volts[0]);
 	}
+	@Override
 	public EditInfo getEditInfo(int n) {
 	    if (n == 0)
 		return new EditInfo("Threshold", threshold, 10, -10);
@@ -76,6 +88,7 @@ import java.util.StringTokenizer;
 	    }
 	    return null;
 	}
+	@Override
 	public void setEditValue(int n, EditInfo ei) {
 	    if (n == 0)
 		threshold = ei.value;
@@ -86,5 +99,4 @@ import java.util.StringTokenizer;
 		    flags &= ~FLAG_PULLDOWN;
 	    }
 	}
-	int getShortcut() { return 'o'; }
     }

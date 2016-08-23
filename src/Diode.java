@@ -1,3 +1,4 @@
+
 class Diode {
     int nodes[];
     CirSim sim;

@@ -1,4 +1,7 @@
-import java.awt.*;
+
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Polygon;
 import java.util.StringTokenizer;
 
 // Zener code contributed by J. Mike Rollins
@@ -15,12 +18,15 @@ class ZenerElm extends DiodeElm {
 	zvoltage = new Double(st.nextToken()).doubleValue();
 	setup();
     }
-    void setup() {
+    @Override
+	void setup() {
 	diode.leakage = 5e-6; // 1N4004 is 5.0 uAmp
 	super.setup();
     }
-    int getDumpType() { return 'z'; }
-    String dump() {
+    @Override
+	int getDumpType() { return 'z'; }
+    @Override
+	String dump() {
 	return super.dump() + " " + zvoltage;
     }
 	
@@ -29,7 +35,8 @@ class ZenerElm extends DiodeElm {
     Point cathode[];
     Point wing[];
 	
-    void setPoints() {
+    @Override
+	void setPoints() {
 	super.setPoints();
 	calcLeads(16);
 	cathode = newPointArray(2);
@@ -42,7 +49,8 @@ class ZenerElm extends DiodeElm {
 	poly = createPolygon(pa[0], pa[1], lead2);
     }
 	
-    void draw(Graphics g) {
+    @Override
+	void draw(Graphics g) {
 	setBbox(point1, point2, hs);
 
 	double v1 = volts[0];
@@ -69,24 +77,26 @@ class ZenerElm extends DiodeElm {
 	
     final double default_zvoltage = 5.6;
 
-    void getInfo(String arr[]) {
+    @Override
+	void getInfo(String arr[]) {
 	super.getInfo(arr);
 	arr[0] = "Zener diode";
 	arr[5] = "Vz = " + getVoltageText(zvoltage);
     }
-    public EditInfo getEditInfo(int n) {
+    @Override
+	public EditInfo getEditInfo(int n) {
 	if (n == 0)
 	    return new EditInfo("Fwd Voltage @ 1A", fwdrop, 10, 1000);
 	if (n == 1)
 	    return new EditInfo("Zener Voltage @ 5mA", zvoltage, 1, 25);
 	return null;
     } 
-    public void setEditValue(int n, EditInfo ei) {
+    @Override
+	public void setEditValue(int n, EditInfo ei) {
 	if (n == 0)
 	    fwdrop = ei.value;
 	if (n == 1)
 	    zvoltage = ei.value;
 	setup();
     }
-    int getShortcut() { return 0; }
 }

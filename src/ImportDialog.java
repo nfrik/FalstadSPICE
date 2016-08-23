@@ -1,5 +1,12 @@
-import java.awt.*;
-import java.awt.event.*;
+
+import java.awt.Button;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Event;
+import java.awt.Point;
+import java.awt.TextArea;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 class ImportDialog extends Dialog implements ActionListener {
     CirSim cframe;
@@ -19,7 +26,7 @@ class ImportDialog extends Dialog implements ActionListener {
 	importButton.addActionListener(this);
 	add(closeButton = new Button("Close"));
 	closeButton.addActionListener(this);
-	Point x = cframe.main.getLocationOnScreen();
+	Point x = CirSim.main.getLocationOnScreen();
 	resize(400, 300);
 	Dimension d = getSize();
 	setLocation(x.x + (cframe.winSize.width-d.width)/2,
@@ -29,7 +36,8 @@ class ImportDialog extends Dialog implements ActionListener {
 	    text.selectAll();
     }
 
-    public void actionPerformed(ActionEvent e) {
+    @Override
+	public void actionPerformed(ActionEvent e) {
 	int i;
 	Object src = e.getSource();
 	if (src == importButton) {
@@ -40,11 +48,12 @@ class ImportDialog extends Dialog implements ActionListener {
 	    setVisible(false);
     }
 	
-    public boolean handleEvent(Event ev) {
+    @Override
+	public boolean handleEvent(Event ev) {
 	if (ev.id == Event.WINDOW_DESTROY) {
 	    CirSim.main.requestFocus();
 	    setVisible(false);
-	    cframe.impDialog = null;
+	    CirSim.impDialog = null;
 	    return true;
 	}
 	return super.handleEvent(ev);

@@ -1,6 +1,17 @@
-import java.awt.*;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+
+/*
+ * Components for Mod start in 501
+ * */
 
 public abstract class CircuitElm implements Editable {
     static double voltageRange = 5;
@@ -29,47 +40,48 @@ public abstract class CircuitElm implements Editable {
     int getDefaultFlags() { return 0; }
 
     static void initClass(CirSim s) {
-	unitsFont = new Font("SansSerif", 0, 10);
-	sim = s;
-	
-	colorScale = new Color[colorScaleCount];
-	int i;
-	for (i = 0; i != colorScaleCount; i++) {
-	    double v = i*2./colorScaleCount - 1;
-	    if (v < 0) {
-		int n1 = (int) (128*-v)+127;
-		int n2 = (int) (127*(1+v));
-		colorScale[i] = new Color(n1, n2, n2);
-	    } else {
-		int n1 = (int) (128*v)+127;
-		int n2 = (int) (127*(1-v));
-		colorScale[i] = new Color(n2, n1, n2);
-	    }
-	}
-	
-	ps1 = new Point();
-	ps2 = new Point();
-
-	showFormat = DecimalFormat.getInstance();
-	showFormat.setMaximumFractionDigits(2);
-	shortFormat = DecimalFormat.getInstance();
-	shortFormat.setMaximumFractionDigits(1);
-	noCommaFormat = DecimalFormat.getInstance();
-	noCommaFormat.setMaximumFractionDigits(10);
-	noCommaFormat.setGroupingUsed(false);
+		unitsFont = new Font("SansSerif", 0, 10);
+		sim = s;
+		
+		colorScale = new Color[colorScaleCount];
+		int i;
+		for (i = 0; i != colorScaleCount; i++) {
+		    double v = i*2./colorScaleCount - 1;
+		    if (v < 0) {
+			int n1 = (int) (128*-v)+127;
+			int n2 = (int) (127*(1+v));
+			colorScale[i] = new Color(n1, n2, n2);
+		    } else {
+			int n1 = (int) (128*v)+127;
+			int n2 = (int) (127*(1-v));
+			colorScale[i] = new Color(n2, n1, n2);
+		    }
+		}
+		
+		ps1 = new Point();
+		ps2 = new Point();
+		
+		showFormat = NumberFormat.getInstance();
+		showFormat.setMaximumFractionDigits(2);
+		shortFormat = NumberFormat.getInstance();
+		shortFormat.setMaximumFractionDigits(1);
+		noCommaFormat = NumberFormat.getInstance();
+		noCommaFormat.setMaximumFractionDigits(10);
+		noCommaFormat.setGroupingUsed(false);
     }
     
     CircuitElm(int xx, int yy) {
-	x = x2 = xx;
-	y = y2 = yy;
-	flags = getDefaultFlags();
-	allocNodes();
-	initBoundingBox();
+		x = x2 = xx;
+		y = y2 = yy;
+		flags = getDefaultFlags();
+		allocNodes();
+		initBoundingBox();
     }
+    
     CircuitElm(int xa, int ya, int xb, int yb, int f) {
-	x = xa; y = ya; x2 = xb; y2 = yb; flags = f;
-	allocNodes();
-	initBoundingBox();
+		x = xa; y = ya; x2 = xb; y2 = yb; flags = f;
+		allocNodes();
+		initBoundingBox();
     }
     
     void initBoundingBox() {
@@ -79,31 +91,36 @@ public abstract class CircuitElm implements Editable {
     }
     
     void allocNodes() {
-	nodes = new int[getPostCount()+getInternalNodeCount()];
-	volts = new double[getPostCount()+getInternalNodeCount()];
+		nodes = new int[getPostCount()+getInternalNodeCount()];
+		volts = new double[getPostCount()+getInternalNodeCount()];
     }
+    
     String dump() {
-	int t = getDumpType();
-	return (t < 127 ? ((char)t)+" " : t+" ") + x + " " + y + " " +
-	    x2 + " " + y2 + " " + flags;
+    	int t = getDumpType();
+		return (t < 127 ? ((char)t)+" " : t+" ") + x + " " + y + " " +
+		    x2 + " " + y2 + " " + flags;
     }
+    
     void reset() {
-	int i;
-	for (i = 0; i != getPostCount()+getInternalNodeCount(); i++)
-	    volts[i] = 0;
-	curcount = 0;
+		int i;
+		for (i = 0; i != getPostCount()+getInternalNodeCount(); i++)
+		    volts[i] = 0;
+		curcount = 0;
     }
-    void draw(Graphics g) {}
-    void setCurrent(int x, double c) { current = c; }
+    
+    void draw(Graphics g) {}   
+    void setCurrent(int x, double c) { current = c; }   
     double getCurrent() { return current; }
     void doStep() {}
     void delete() {}
     void startIteration() {}
     double getPostVoltage(int x) { return volts[x]; }
+    
     void setNodeVoltage(int n, double c) {
-	volts[n] = c;
-	calculateCurrent();
+		volts[n] = c;
+		calculateCurrent();
     }
+    
     void calculateCurrent() {}
     void setPoints() {
 	dx = x2-x; dy = y2-y;
@@ -574,8 +591,10 @@ public abstract class CircuitElm implements Editable {
     String getScopeUnits(int x) {
 	return (x == 1) ? "W" : "V";
     }
-    public EditInfo getEditInfo(int n) { return null; }
-    public void setEditValue(int n, EditInfo ei) {}
+    @Override
+	public EditInfo getEditInfo(int n) { return null; }
+    @Override
+	public void setEditValue(int n, EditInfo ei) {}
     boolean getConnection(int n1, int n2) { return true; }
     boolean hasGroundConnection(int n1) { return false; }
     boolean isWire() { return false; }
@@ -599,8 +618,5 @@ public abstract class CircuitElm implements Editable {
 	return Math.sqrt(x*x+y*y);
     }
     Rectangle getBoundingBox() { return boundingBox; }
-    boolean needsShortcut() { return getShortcut() > 0; }
-    int getShortcut() { return 0; }
-
-    boolean isGraphicElmt() { return false; }
+    boolean needsShortcut() { return false; }
 }

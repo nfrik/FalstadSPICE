@@ -1,16 +1,26 @@
-import java.awt.*;
+
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.LayoutManager;
 
 class ImportDialogLayout implements LayoutManager {
     public ImportDialogLayout() {}
-    public void addLayoutComponent(String name, Component c) {}
-    public void removeLayoutComponent(Component c) {}
-    public Dimension preferredLayoutSize(Container target) {
+    @Override
+	public void addLayoutComponent(String name, Component c) {}
+    @Override
+	public void removeLayoutComponent(Component c) {}
+    @Override
+	public Dimension preferredLayoutSize(Container target) {
 	return new Dimension(500, 500);
     }
-    public Dimension minimumLayoutSize(Container target) {
+    @Override
+	public Dimension minimumLayoutSize(Container target) {
 	return new Dimension(100,100);
     }
-    public void layoutContainer(Container target) {
+    @Override
+	public void layoutContainer(Container target) {
 	Insets insets = target.insets();
 	int targetw = target.size().width - insets.left - insets.right;
 	int targeth = target.size().height - (insets.top+insets.bottom);

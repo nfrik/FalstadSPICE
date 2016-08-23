@@ -1,4 +1,6 @@
-import java.awt.*;
+
+import java.awt.Graphics;
+import java.awt.Point;
 import java.util.StringTokenizer;
 
     class ResistorElm extends CircuitElm {
@@ -9,12 +11,15 @@ import java.util.StringTokenizer;
 	    super(xa, ya, xb, yb, f);
 	    resistance = new Double(st.nextToken()).doubleValue();
 	}
+	@Override
 	int getDumpType() { return 'r'; }
+	@Override
 	String dump() {
 	    return super.dump() + " " + resistance;
 	}
 
 	Point ps3, ps4;
+	@Override
 	void setPoints() {
 	    super.setPoints();
 	    calcLeads(32);
@@ -22,8 +27,9 @@ import java.util.StringTokenizer;
 	    ps4 = new Point();
 	}
 	
+	@Override
 	void draw(Graphics g) {
-	    int segments = 6;
+	    int segments = 16;
 	    int i;
 	    int ox = 0;
 	    int hs = sim.euroResistorCheckItem.getState() ? 6 : 8;
@@ -73,28 +79,34 @@ import java.util.StringTokenizer;
 	    drawPosts(g);
 	}
     
+	@Override
 	void calculateCurrent() {
 	    current = (volts[0]-volts[1])/resistance;
 	    //System.out.print(this + " res current set to " + current + "\n");
 	}
+	@Override
 	void stamp() {
 	    sim.stampResistor(nodes[0], nodes[1], resistance);
 	}
+	@Override
 	void getInfo(String arr[]) {
 	    arr[0] = "resistor";
 	    getBasicInfo(arr);
-	    arr[3] = "R = " + getUnitText(resistance, sim.ohmString);
+	    arr[3] = "R = " + getUnitText(resistance, CirSim.ohmString);
 	    arr[4] = "P = " + getUnitText(getPower(), "W");
 	}
+	@Override
 	public EditInfo getEditInfo(int n) {
 	    // ohmString doesn't work here on linux
 	    if (n == 0)
 		return new EditInfo("Resistance (ohms)", resistance, 0, 0);
 	    return null;
 	}
+	@Override
 	public void setEditValue(int n, EditInfo ei) {
 	    if (ei.value > 0)
 	        resistance = ei.value;
 	}
-	int getShortcut() { return 'r'; }
+	@Override
+	boolean needsShortcut() { return true; }
     }

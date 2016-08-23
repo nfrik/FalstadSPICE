@@ -1,3 +1,4 @@
+
 class Inductor {
     public static final int FLAG_BACK_EULER = 2;
     int nodes[];

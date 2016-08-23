@@ -1,4 +1,7 @@
-import java.awt.*;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.util.StringTokenizer;
 
     class LEDElm extends DiodeElm {
@@ -19,12 +22,15 @@ import java.util.StringTokenizer;
 	    colorG = new Double(st.nextToken()).doubleValue();
 	    colorB = new Double(st.nextToken()).doubleValue();
 	}
+	@Override
 	int getDumpType() { return 162; }
+	@Override
 	String dump() {
 	    return super.dump() + " " + colorR + " " + colorG + " " + colorB;
 	}
 
 	Point ledLead1, ledLead2, ledCenter;
+	@Override
 	void setPoints() {
 	    super.setPoints();
 	    int cr = 12;
@@ -33,6 +39,7 @@ import java.util.StringTokenizer;
 	    ledCenter = interpPoint(point1, point2, .5);
 	}
 	
+	@Override
 	void draw(Graphics g) {
 	    if (needsHighlight() || this == sim.dragElm) {
 		super.draw(g);
@@ -61,11 +68,13 @@ import java.util.StringTokenizer;
 	    drawPosts(g);
 	}
 
+	@Override
 	void getInfo(String arr[]) {
 	    super.getInfo(arr);
 	    arr[0] = "LED";
 	}
 
+	@Override
 	public EditInfo getEditInfo(int n) {
 	    if (n == 0)
 		return super.getEditInfo(n);
@@ -80,6 +89,7 @@ import java.util.StringTokenizer;
 		    setDimensionless();
 	    return null;
 	}
+	@Override
 	public void setEditValue(int n, EditInfo ei) {
 	    if (n == 0)
 		super.setEditValue(0, ei);
@@ -90,5 +100,4 @@ import java.util.StringTokenizer;
 	    if (n == 3)
 		colorB = ei.value;
 	}
-	int getShortcut() { return 'l'; }
     }

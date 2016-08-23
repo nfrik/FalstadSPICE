@@ -1,4 +1,8 @@
-import java.awt.*;
+
+import java.awt.Checkbox;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.util.StringTokenizer;
 
 // 0 = switch
@@ -66,15 +70,18 @@ class RelayElm extends CircuitElm {
 	}
     }
     
-    int getDumpType() { return 178; }
+    @Override
+	int getDumpType() { return 178; }
     
-    String dump() {
+    @Override
+	String dump() {
 	return super.dump() + " " + poleCount + " " +
 	    inductance + " " + coilCurrent + " " +
 	    r_on + " " + r_off + " " + onCurrent + " " + coilR;
     }
     
-    void draw(Graphics g) {
+    @Override
+	void draw(Graphics g) {
 	int i, p;
 	for (i = 0; i != 2; i++) {
 	    setVoltageColor(g, volts[nCoil1+i]);
@@ -130,7 +137,8 @@ class RelayElm extends CircuitElm {
 	adjustBbox(swpoles[poleCount-1][0], swposts[poleCount-1][1]); // XXX
     }
 	
-    void setPoints() {
+    @Override
+	void setPoints() {
 	super.setPoints();
 	setupPoles();
 	allocNodes();
@@ -168,14 +176,18 @@ class RelayElm extends CircuitElm {
 	// lines
 	lines = newPointArray(poleCount*2);
     }
-    Point getPost(int n) {
+    @Override
+	Point getPost(int n) {
 	if (n < 3*poleCount)
 	    return swposts[n / 3][n % 3];
 	return coilPosts[n-3*poleCount];
     }
-    int getPostCount() { return 2+poleCount*3; }
-    int getInternalNodeCount() { return 1; }
-    void reset() {
+    @Override
+	int getPostCount() { return 2+poleCount*3; }
+    @Override
+	int getInternalNodeCount() { return 1; }
+    @Override
+	void reset() {
 	super.reset();
 	ind.reset();
 	coilCurrent = coilCurCount = 0;
@@ -184,7 +196,8 @@ class RelayElm extends CircuitElm {
 	    switchCurrent[i] = switchCurCount[i] = 0;
     }
     double a1, a2, a3, a4;
-    void stamp() {
+    @Override
+	void stamp() {
 	// inductor from coil post 1 to internal node
 	ind.stamp(nodes[nCoil1], nodes[nCoil3]);
 	// resistor from internal node to coil post 2
@@ -194,7 +207,8 @@ class RelayElm extends CircuitElm {
 	for (i = 0; i != poleCount*3; i++)
 	    sim.stampNonLinear(nodes[nSwitch0+i]);
     }
-    void startIteration() {
+    @Override
+	void startIteration() {
 	ind.startIteration(volts[nCoil1]-volts[nCoil3]);
 
 	// magic value to balance operate speed with reset speed semi-realistically
@@ -216,9 +230,11 @@ class RelayElm extends CircuitElm {
     }
     	
     // we need this to be able to change the matrix for each step
-    boolean nonLinear() { return true; }
+    @Override
+	boolean nonLinear() { return true; }
 
-    void doStep() {
+    @Override
+	void doStep() {
 	double voltdiff = volts[nCoil1]-volts[nCoil3];
 	ind.doStep(voltdiff);
 	int p;
@@ -229,7 +245,8 @@ class RelayElm extends CircuitElm {
 			      i_position == 1 ? r_on : r_off);
 	}
     }
-    void calculateCurrent() {
+    @Override
+	void calculateCurrent() {
 	double voltdiff = volts[nCoil1]-volts[nCoil3];
 	coilCurrent = ind.calculateCurrent(voltdiff);
 
@@ -244,7 +261,8 @@ class RelayElm extends CircuitElm {
 		    (volts[nSwitch0+p*3]-volts[nSwitch1+p*3+i_position])/r_on;
 	}
     }
-    void getInfo(String arr[]) {
+    @Override
+	void getInfo(String arr[]) {
 	arr[0] = i_position == 0 ? "relay (off)" :
 	    i_position == 1 ? "relay (on)" : "relay";
 	int i;
@@ -255,7 +273,8 @@ class RelayElm extends CircuitElm {
 	arr[ln++] = "coil Vd = " +
 	    getVoltageDText(volts[nCoil1] - volts[nCoil2]);
     }
-    public EditInfo getEditInfo(int n) {
+    @Override
+	public EditInfo getEditInfo(int n) {
 	if (n == 0)
 	    return new EditInfo("Inductance (H)", inductance, 0, 0);
 	if (n == 1)
@@ -277,7 +296,8 @@ class RelayElm extends CircuitElm {
 	}
 	return null;
     }
-    public void setEditValue(int n, EditInfo ei) {
+    @Override
+	public void setEditValue(int n, EditInfo ei) {
 	if (n == 0 && ei.value > 0) {
 	    inductance = ei.value;
 	    ind.setup(inductance, coilCurrent, Inductor.FLAG_BACK_EULER);
@@ -302,9 +322,9 @@ class RelayElm extends CircuitElm {
 	    setPoints();
 	}
     }
-    boolean getConnection(int n1, int n2) {
+    @Override
+	boolean getConnection(int n1, int n2) {
 	return (n1 / 3 == n2 / 3);
     }
-    int getShortcut() { return 'R'; }
 }
     

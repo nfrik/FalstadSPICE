@@ -1,3 +1,4 @@
+
     // info about each row/column of the matrix for simplification purposes
     class RowInfo {
 	static final int ROW_NORMAL = 0;  // ordinary value

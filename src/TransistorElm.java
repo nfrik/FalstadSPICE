@@ -1,4 +1,9 @@
-import java.awt.*;
+
+import java.awt.Checkbox;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Polygon;
 import java.util.StringTokenizer;
 
     class TransistorElm extends CircuitElm {
@@ -34,12 +39,16 @@ import java.util.StringTokenizer;
 	    fgain = beta/(beta+1);
 	    noDiagonal = true;
 	}
+	@Override
 	boolean nonLinear() { return true; }
+	@Override
 	void reset() {
 	    volts[0] = volts[1] = volts[2] = 0;
 	    lastvbc = lastvbe = curcount_c = curcount_e = curcount_b = 0;
 	}
+	@Override
 	int getDumpType() { return 't'; }
+	@Override
 	String dump() {
 	    return super.dump() + " " + pnp + " " + (volts[0]-volts[1]) + " " +
 		(volts[0]-volts[2]) + " " + beta;
@@ -47,6 +56,7 @@ import java.util.StringTokenizer;
 	double ic, ie, ib, curcount_c, curcount_e, curcount_b;
 	Polygon rectPoly, arrowPoly;
 	
+	@Override
 	void draw(Graphics g) {
 	    setBbox(point1, point2, 16);
 	    setPowerColor(g, true);
@@ -86,16 +96,20 @@ import java.util.StringTokenizer;
 	    }
 	    drawPosts(g);
 	}
+	@Override
 	Point getPost(int n) {
 	    return (n == 0) ? point1 : (n == 1) ? coll[0] : emit[0];
 	}
 	
+	@Override
 	int getPostCount() { return 3; }
+	@Override
 	double getPower() {
 	    return (volts[0]-volts[2])*ib + (volts[1]-volts[2])*ic;
 	}
 
 	Point rect[], coll[], emit[], base;
+	@Override
 	void setPoints() {
 	    super.setPoints();
 	    int hs = 16;
@@ -154,11 +168,13 @@ import java.util.StringTokenizer;
 	    }
 	    return(vnew);
 	}
+	@Override
 	void stamp() {
 	    sim.stampNonLinear(nodes[0]);
 	    sim.stampNonLinear(nodes[1]);
 	    sim.stampNonLinear(nodes[2]);
 	}
+	@Override
 	void doStep() {
 	    double vbc = volts[0]-volts[1]; // typically negative
 	    double vbe = volts[0]-volts[2]; // typically positive
@@ -223,6 +239,7 @@ import java.util.StringTokenizer;
 	    sim.stampRightSide(nodes[1], -ic + gce*vbe + gcc*vbc);
 	    sim.stampRightSide(nodes[2], -ie + gee*vbe + gec*vbc);
 	}
+	@Override
 	void getInfo(String arr[]) {
 	    arr[0] = "transistor (" + ((pnp == -1) ? "PNP)" : "NPN)") + " beta=" +
 		showFormat.format(beta);
@@ -239,6 +256,7 @@ import java.util.StringTokenizer;
 	    arr[5] = "Vbc = " + getVoltageText(vbc);
 	    arr[6] = "Vce = " + getVoltageText(vce);
 	}
+	@Override
 	double getScopeValue(int x) {
 	    switch (x) {
 	    case Scope.VAL_IB: return ib;
@@ -250,6 +268,7 @@ import java.util.StringTokenizer;
 	    }
 	    return 0;
 	}
+	@Override
 	String getScopeUnits(int x) {
 	    switch (x) {
 	    case Scope.VAL_IB: case Scope.VAL_IC:
@@ -257,6 +276,7 @@ import java.util.StringTokenizer;
 	    default: return "V";
 	    }
 	}
+	@Override
 	public EditInfo getEditInfo(int n) {
 	    if (n == 0)
 		return new EditInfo("Beta/hFE", beta, 10, 1000).
@@ -268,6 +288,7 @@ import java.util.StringTokenizer;
 	    }
 	    return null;
 	}
+	@Override
 	public void setEditValue(int n, EditInfo ei) {
 	    if (n == 0) {
 		beta = ei.value;
@@ -281,5 +302,6 @@ import java.util.StringTokenizer;
 		setPoints();
 	    }
 	}
+	@Override
 	boolean canViewInScope() { return true; }
     }

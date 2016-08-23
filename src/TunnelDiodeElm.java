@@ -1,4 +1,7 @@
-import java.awt.*;
+
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Polygon;
 import java.util.StringTokenizer;
 
 class TunnelDiodeElm extends CircuitElm {
@@ -11,16 +14,19 @@ class TunnelDiodeElm extends CircuitElm {
 	super(xa, ya, xb, yb, f);
 	setup();
     }
-    boolean nonLinear() { return true; }
+    @Override
+	boolean nonLinear() { return true; }
     void setup() {
     }
-    int getDumpType() { return 175; }
+    @Override
+	int getDumpType() { return 175; }
 	
     final int hs = 8;
     Polygon poly;
     Point cathode[];
 	
-    void setPoints() {
+    @Override
+	void setPoints() {
 	super.setPoints();
 	calcLeads(16);
 	cathode = newPointArray(4);
@@ -31,7 +37,8 @@ class TunnelDiodeElm extends CircuitElm {
 	poly = createPolygon(pa[0], pa[1], lead2);
     }
 	
-    void draw(Graphics g) {
+    @Override
+	void draw(Graphics g) {
 	setBbox(point1, point2, hs);
 
 	double v1 = volts[0];
@@ -54,7 +61,8 @@ class TunnelDiodeElm extends CircuitElm {
 	drawPosts(g);
     }
 	
-    void reset() {
+    @Override
+	void reset() {
 	lastvoltdiff = volts[0] = volts[1] = curcount = 0;
     }
 	
@@ -68,7 +76,8 @@ class TunnelDiodeElm extends CircuitElm {
 	    return vold-1;
 	return vnew;
     }
-    void stamp() {
+    @Override
+	void stamp() {
 	sim.stampNonLinear(nodes[0]);
 	sim.stampNonLinear(nodes[1]);
     }
@@ -78,7 +87,8 @@ class TunnelDiodeElm extends CircuitElm {
     static final double pvt = .026;
     static final double pvpp = .525;
     static final double piv = 370e-6;
-    void doStep() {
+    @Override
+	void doStep() {
 	double voltdiff = volts[0] - volts[1];
 	if (Math.abs(voltdiff-lastvoltdiff) > .01)
 	    sim.converged = false;
@@ -98,13 +108,15 @@ class TunnelDiodeElm extends CircuitElm {
 	sim.stampConductance(nodes[0], nodes[1], geq);
 	sim.stampCurrentSource(nodes[0], nodes[1], nc);
     }
-    void calculateCurrent() {
+    @Override
+	void calculateCurrent() {
 	double voltdiff = volts[0] - volts[1];
 	current = pip*Math.exp(-pvpp/pvt)*(Math.exp(voltdiff/pvt)-1) +
 	    pip*(voltdiff/pvp)*Math.exp(1-voltdiff/pvp) +
 	    piv*Math.exp(voltdiff-pvv);
     }
-    void getInfo(String arr[]) {
+    @Override
+	void getInfo(String arr[]) {
 	arr[0] = "tunnel diode";
 	arr[1] = "I = " + getCurrentText(getCurrent());
 	arr[2] = "Vd = " + getVoltageText(getVoltageDiff());

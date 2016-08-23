@@ -1,4 +1,7 @@
-import java.awt.*;
+
+import java.awt.Checkbox;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.util.StringTokenizer;
 
 class AnalogSwitchElm extends CircuitElm {
@@ -20,15 +23,18 @@ class AnalogSwitchElm extends CircuitElm {
 	} catch (Exception e) { }
 	
     }
-    String dump() {
+    @Override
+	String dump() {
 	return super.dump() + " " + r_on + " " + r_off;
     }
     
-    int getDumpType() { return 159; }
+    @Override
+	int getDumpType() { return 159; }
     boolean open;
 	
     Point ps, point3, lead3;
-    void setPoints() {
+    @Override
+	void setPoints() {
 	super.setPoints();
 	calcLeads(32);
 	ps = new Point();
@@ -37,7 +43,8 @@ class AnalogSwitchElm extends CircuitElm {
 	lead3  = interpPoint(point1, point2, .5, -openhs/2);
     }
 	
-    void draw(Graphics g) {
+    @Override
+	void draw(Graphics g) {
 	int openhs = 16;
 	int hs = (open) ? openhs : 0;
 	setBbox(point1, point2, openhs);
@@ -55,25 +62,30 @@ class AnalogSwitchElm extends CircuitElm {
 	    doDots(g);
 	drawPosts(g);
     }
-    void calculateCurrent() {
+    @Override
+	void calculateCurrent() {
 	current = (volts[0]-volts[1])/resistance;
     }
 	
     // we need this to be able to change the matrix for each step
-    boolean nonLinear() { return true; }
+    @Override
+	boolean nonLinear() { return true; }
 
-    void stamp() {
+    @Override
+	void stamp() {
 	sim.stampNonLinear(nodes[0]);
 	sim.stampNonLinear(nodes[1]);
     }
-    void doStep() {
+    @Override
+	void doStep() {
 	open = (volts[2] < 2.5);
 	if ((flags & FLAG_INVERT) != 0)
 	    open = !open;
 	resistance = (open) ? r_off : r_on;
 	sim.stampResistor(nodes[0], nodes[1], resistance);
     }
-    void drag(int xx, int yy) {
+    @Override
+	void drag(int xx, int yy) {
 	xx = sim.snapGrid(xx);
 	yy = sim.snapGrid(yy);
 	if (abs(x-xx) < abs(y-yy))
@@ -87,11 +99,14 @@ class AnalogSwitchElm extends CircuitElm {
 	x2 = xx; y2 = yy;
 	setPoints();
     }
-    int getPostCount() { return 3; }
-    Point getPost(int n) {
+    @Override
+	int getPostCount() { return 3; }
+    @Override
+	Point getPost(int n) {
 	return (n == 0) ? point1 : (n == 1) ? point2 : point3;
     }
-    void getInfo(String arr[]) {
+    @Override
+	void getInfo(String arr[]) {
 	arr[0] = "analog switch";
 	arr[1] = open ? "open" : "closed";
 	arr[2] = "Vd = " + getVoltageDText(getVoltageDiff());
@@ -100,12 +115,14 @@ class AnalogSwitchElm extends CircuitElm {
     }
     // we have to just assume current will flow either way, even though that
     // might cause singular matrix errors
-    boolean getConnection(int n1, int n2) {
+    @Override
+	boolean getConnection(int n1, int n2) {
 	if (n1 == 2 || n2 == 2)
 	    return false;
 	return true;
     }
-    public EditInfo getEditInfo(int n) {
+    @Override
+	public EditInfo getEditInfo(int n) {
 	if (n == 0) {
 	    EditInfo ei = new EditInfo("", 0, -1, -1);
 	    ei.checkbox = new Checkbox("Normally closed",
@@ -118,7 +135,8 @@ class AnalogSwitchElm extends CircuitElm {
 	    return new EditInfo("Off Resistance (ohms)", r_off, 0, 0);
 	return null;
     }
-    public void setEditValue(int n, EditInfo ei) {
+    @Override
+	public void setEditValue(int n, EditInfo ei) {
 	if (n == 0)
 	    flags = (ei.checkbox.getState()) ?
 		(flags | FLAG_INVERT) :

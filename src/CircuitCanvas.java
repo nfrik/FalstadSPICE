@@ -1,21 +1,32 @@
-import java.awt.*;
+
+import java.awt.Canvas;
+import java.awt.Dimension;
+import java.awt.Graphics;
 
 class CircuitCanvas extends Canvas {
-    CirSim pg;
-
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	CirSim pg;
+	
     CircuitCanvas(CirSim p) {
-        pg = p;
+    	pg = p;
     }
-
-    public Dimension getPreferredSize() {
-        return new Dimension(300, 400);
+    
+    @Override
+	public Dimension getPreferredSize() {
+    	return new Dimension(300,400);
     }
-
-    public void update(Graphics g) {
-        pg.updateCircuit(g);
+    
+    @Override
+	public void update(Graphics g) {
+    	pg.updateCircuit(g);
     }
-
-    public void paint(Graphics g) {
-        pg.updateCircuit(g);
+    
+    @Override
+	public void paint(Graphics g) {
+    	pg.updateCircuit(g);
     }
 };

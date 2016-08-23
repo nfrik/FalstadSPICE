@@ -1,4 +1,7 @@
-import java.awt.*;
+
+import java.awt.Checkbox;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.util.StringTokenizer;
 
     class LogicInputElm extends SwitchElm {
@@ -25,15 +28,20 @@ import java.util.StringTokenizer;
 	}
 	boolean isTernary() { return (flags & FLAG_TERNARY) != 0; }
 	boolean isNumeric() { return (flags & (FLAG_TERNARY|FLAG_NUMERIC)) != 0; }
+	@Override
 	int getDumpType() { return 'L'; }
+	@Override
 	String dump() {
 	    return super.dump() + " " + hiV + " " + loV;
 	}
+	@Override
 	int getPostCount() { return 1; }
+	@Override
 	void setPoints() {
 	    super.setPoints();
 	    lead1 = interpPoint(point1, point2, 1-12/dn);
 	}
+	@Override
 	void draw(Graphics g) {
 	    Font f = new Font("SansSerif", Font.BOLD, 20);
 	    g.setFont(f);
@@ -49,15 +57,20 @@ import java.util.StringTokenizer;
 	    drawDots(g, point1, lead1, curcount);
 	    drawPosts(g);
 	}
+	@Override
 	void setCurrent(int vs, double c) { current = -c; }
+	@Override
 	void stamp() {
 	    double v = (position == 0) ? loV : hiV;
 	    if (isTernary())
 		v = position * 2.5;
 	    sim.stampVoltageSource(0, nodes[0], voltSource, v);
 	}
+	@Override
 	int getVoltageSourceCount() { return 1; }
+	@Override
 	double getVoltageDiff() { return volts[0]; }
+	@Override
 	void getInfo(String arr[]) {
 	    arr[0] = "logic input";
 	    arr[1] = (position == 0) ? "low" : "high";
@@ -66,7 +79,9 @@ import java.util.StringTokenizer;
 	    arr[1] += " (" + getVoltageText(volts[0]) + ")";
 	    arr[2] = "I = " + getCurrentText(getCurrent());
 	}
+	@Override
 	boolean hasGroundConnection(int n1) { return true; }
+	@Override
 	public EditInfo getEditInfo(int n) {
 	    if (n == 0) {
 		EditInfo ei = new EditInfo("", 0, 0, 0);
@@ -79,6 +94,7 @@ import java.util.StringTokenizer;
 		return new EditInfo("Low Voltage", loV, 10, -10);
 	    return null;
 	}
+	@Override
 	public void setEditValue(int n, EditInfo ei) {
 	    if (n == 0)
 		momentary = ei.checkbox.getState();
@@ -87,5 +103,4 @@ import java.util.StringTokenizer;
 	    if (n == 2)
 		loV = ei.value;
 	}
-	int getShortcut() { return 'i'; }
     }

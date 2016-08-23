@@ -1,4 +1,6 @@
-import java.awt.*;
+
+import java.awt.Label;
+import java.awt.Scrollbar;
 import java.util.StringTokenizer;
 
     class VarRailElm extends RailElm {
@@ -19,25 +21,30 @@ import java.util.StringTokenizer;
 		sliderText += ' ' + st.nextToken();
 	    createSlider();
 	}
+	@Override
 	String dump() {
 	    return super.dump() + " " + sliderText;
 	}
+	@Override
 	int getDumpType() { return 172; }
 	void createSlider() {
 	    waveform = WF_VAR;
-	    sim.main.add(label = new Label(sliderText, Label.CENTER));
+	    CirSim.main.add(label = new Label(sliderText, Label.CENTER));
 	    int value = (int) ((frequency-bias)*100/(maxVoltage-bias));
-	    sim.main.add(slider = new Scrollbar(Scrollbar.HORIZONTAL, value, 1, 0, 101));
-	    sim.main.validate();
+	    CirSim.main.add(slider = new Scrollbar(Scrollbar.HORIZONTAL, value, 1, 0, 101));
+	    CirSim.main.validate();
 	}
+	@Override
 	double getVoltage() {
 	    frequency = slider.getValue() * (maxVoltage-bias) / 100. + bias;
 	    return frequency;
 	}
+	@Override
 	void delete() {
-	    sim.main.remove(label);
-	    sim.main.remove(slider);
+	    CirSim.main.remove(label);
+	    CirSim.main.remove(slider);
 	}
+	@Override
 	public EditInfo getEditInfo(int n) {
 	    if (n == 0)
 		return new EditInfo("Min Voltage", bias, -20, 20);
@@ -50,6 +57,7 @@ import java.util.StringTokenizer;
 	    }
 	    return null;
 	}
+	@Override
 	public void setEditValue(int n, EditInfo ei) {
 	    if (n == 0)
 		bias = ei.value;
@@ -60,5 +68,4 @@ import java.util.StringTokenizer;
 		label.setText(sliderText);
 	    }
 	}
-	int getShortcut() { return 0; }
     }

@@ -1,4 +1,6 @@
-import java.awt.*;
+
+import java.awt.Graphics;
+import java.awt.Point;
 import java.util.StringTokenizer;
 
     class TappedTransformerElm extends CircuitElm {
@@ -12,9 +14,6 @@ import java.util.StringTokenizer;
 	    noDiagonal = true;
 	    current  = new double[4];
 	    curcount = new double[4];
-	    voltdiff = new double[3];
-	    curSourceValue = new double[3];
-	    a = new double[9];
 	}
 	public TappedTransformerElm(int xa, int ya, int xb, int yb, int f,
 			      StringTokenizer st) {
@@ -28,16 +27,16 @@ import java.util.StringTokenizer;
 	    try {
 		current[2] = new Double(st.nextToken()).doubleValue();
 	    } catch (Exception e) { }
-	    voltdiff = new double[3];
-	    curSourceValue = new double[3];
 	    noDiagonal = true;
-	    a = new double[9];
 	}
+	@Override
 	int getDumpType() { return 169; }
+	@Override
 	String dump() {
 	    return super.dump() + " " + inductance + " " + ratio + " " +
 		current[0] + " " + current[1] + " " + current[2];
 	}
+	@Override
 	void draw(Graphics g) {
 	    int i;
 	    for (i = 0; i != 5; i++) {
@@ -76,6 +75,7 @@ import java.util.StringTokenizer;
 	    setBbox(ptEnds[0], ptEnds[4], 0);
 	}
 	
+	@Override
 	void setPoints() {
 	    super.setPoints();
 	    int hs = 32;
@@ -101,15 +101,19 @@ import java.util.StringTokenizer;
 		interpPoint(ptEnds[0], ptEnds[2], ptCore[i+2], 1-cd, b);
 	    }
 	}
+	@Override
 	Point getPost(int n) {
 	    return ptEnds[n];
 	}
+	@Override
 	int getPostCount() { return 5; }
+	@Override
 	void reset() {
 	    current[0] = current[1] = volts[0] = volts[1] = volts[2] =
 		volts[3] = curcount[0] = curcount[1] = 0;
 	}
 	double a[];
+	@Override
 	void stamp() {
 	    // equations for transformer:
 	    //   v1 = L1 di1/dt + M1 di2/dt + M1 di3/dt
@@ -142,6 +146,7 @@ import java.util.StringTokenizer;
 	    // is equal to self-inductance of either half (slightly less
 	    // because the coupling is not perfect)
 	    //double m2 = .999*l2;
+	    a = new double[9];
 	    // load pre-inverted matrix
 	    a[0] = (1+cc)/(l1*(1+cc-2*cc*cc));
 	    a[1] = a[2] = a[3] = a[6] = 2*cc/((2*cc*cc-cc-1)*inductance*ratio);
@@ -164,7 +169,10 @@ import java.util.StringTokenizer;
 
 	    for (i = 0; i != 5; i++)
 		sim.stampRightSide(nodes[i]);
+	    voltdiff = new double[3];
+	    curSourceValue = new double[3];
 	}
+	@Override
 	void startIteration() {
 	    voltdiff[0] = volts[0]-volts[1];
 	    voltdiff[1] = volts[2]-volts[3];
@@ -177,11 +185,13 @@ import java.util.StringTokenizer;
 	    }
 	}
 	double curSourceValue[], voltdiff[];
+	@Override
 	void doStep() {
 	    sim.stampCurrentSource(nodes[0], nodes[1], curSourceValue[0]);
 	    sim.stampCurrentSource(nodes[2], nodes[3], curSourceValue[1]);
 	    sim.stampCurrentSource(nodes[3], nodes[4], curSourceValue[2]);
  	}
+	@Override
 	void calculateCurrent() {
 	    voltdiff[0] = volts[0]-volts[1];
 	    voltdiff[1] = volts[2]-volts[3];
@@ -193,6 +203,7 @@ import java.util.StringTokenizer;
 		    current[i] += a[i*3+j]*voltdiff[j];
 	    }
 	}
+	@Override
 	void getInfo(String arr[]) {
 	    arr[0] = "transformer";
 	    arr[1] = "L = " + getUnitText(inductance, "H");
@@ -202,6 +213,7 @@ import java.util.StringTokenizer;
 	    //arr[5] = "I2 = " + getCurrentText(current2);
 	    arr[4] = "Vd2 = " + getVoltageText(volts[1]-volts[3]);
 	}
+	@Override
 	boolean getConnection(int n1, int n2) {
 	    if (comparePair(n1, n2, 0, 1))
 		return true;
@@ -213,6 +225,7 @@ import java.util.StringTokenizer;
 		return true;
 	    return false;
 	}
+	@Override
 	public EditInfo getEditInfo(int n) {
 	    if (n == 0)
 		return new EditInfo("Primary Inductance (H)", inductance, .01, 5);
@@ -220,6 +233,7 @@ import java.util.StringTokenizer;
 		return new EditInfo("Ratio", ratio, 1, 10).setDimensionless();
 	    return null;
 	}
+	@Override
 	public void setEditValue(int n, EditInfo ei) {
 	    if (n == 0)
 		inductance = ei.value;

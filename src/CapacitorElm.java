@@ -1,4 +1,8 @@
-import java.awt.*;
+
+import java.awt.Checkbox;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.util.StringTokenizer;
 
     class CapacitorElm extends CircuitElm {
@@ -17,19 +21,24 @@ import java.util.StringTokenizer;
 	    voltdiff = new Double(st.nextToken()).doubleValue();
 	}
 	boolean isTrapezoidal() { return (flags & FLAG_BACK_EULER) == 0; }
+	@Override
 	void setNodeVoltage(int n, double c) {
 	    super.setNodeVoltage(n, c);
 	    voltdiff = volts[0]-volts[1];
 	}
+	@Override
 	void reset() {
 	    current = curcount = 0;
 	    // put small charge on caps when reset to start oscillators
 	    voltdiff = 1e-3;
 	}
+	@Override
 	int getDumpType() { return 'c'; }
+	@Override
 	String dump() {
 	    return super.dump() + " " + capacitance + " " + voltdiff;
 	}
+	@Override
 	void setPoints() {
 	    super.setPoints();
 	    double f = (dn/2-4)/dn;
@@ -43,6 +52,7 @@ import java.util.StringTokenizer;
 	    interpPoint2(point1, point2, plate2[0], plate2[1], 1-f, 12);
 	}
 	
+	@Override
 	void draw(Graphics g) {
 	    int hs = 12;
 	    setBbox(point1, point2, hs);
@@ -72,6 +82,7 @@ import java.util.StringTokenizer;
 		drawValues(g, s, hs);
 	    }
 	}
+	@Override
 	void stamp() {
 	    // capacitor companion model using trapezoidal approximation
 	    // (Norton equivalent) consists of a current source in
@@ -86,6 +97,7 @@ import java.util.StringTokenizer;
 	    sim.stampRightSide(nodes[0]);
 	    sim.stampRightSide(nodes[1]);
 	}
+	@Override
 	void startIteration() {
 	    if (isTrapezoidal())
 		curSourceValue = -voltdiff/compResistance-current;
@@ -93,6 +105,7 @@ import java.util.StringTokenizer;
 		curSourceValue = -voltdiff/compResistance;
 	    //System.out.println("cap " + compResistance + " " + curSourceValue + " " + current + " " + voltdiff);
 	}
+	@Override
 	void calculateCurrent() {
 	    double voltdiff = volts[0] - volts[1];
 	    // we check compResistance because this might get called
@@ -102,9 +115,11 @@ import java.util.StringTokenizer;
 		current = voltdiff/compResistance + curSourceValue;
 	}
 	double curSourceValue;
+	@Override
 	void doStep() {
 	    sim.stampCurrentSource(nodes[0], nodes[1], curSourceValue);
  	}
+	@Override
 	void getInfo(String arr[]) {
 	    arr[0] = "capacitor";
 	    getBasicInfo(arr);
@@ -113,6 +128,7 @@ import java.util.StringTokenizer;
 	    //double v = getVoltageDiff();
 	    //arr[4] = "U = " + getUnitText(.5*capacitance*v*v, "J");
 	}
+	@Override
 	public EditInfo getEditInfo(int n) {
 	    if (n == 0)
 		return new EditInfo("Capacitance (F)", capacitance, 0, 0);
@@ -123,6 +139,7 @@ import java.util.StringTokenizer;
 	    }
 	    return null;
 	}
+	@Override
 	public void setEditValue(int n, EditInfo ei) {
 	    if (n == 0 && ei.value > 0)
 		capacitance = ei.value;
@@ -133,5 +150,6 @@ import java.util.StringTokenizer;
 		    flags |= FLAG_BACK_EULER;
 	    }
 	}
-	int getShortcut() { return 'c'; }
+	@Override
+	boolean needsShortcut() { return true; }
     }

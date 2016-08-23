@@ -1,4 +1,6 @@
-import java.awt.*;
+
+import java.awt.Font;
+import java.awt.Graphics;
 import java.util.StringTokenizer;
 
 class RailElm extends VoltageElm {
@@ -9,14 +11,18 @@ class RailElm extends VoltageElm {
 	super(xa, ya, xb, yb, f, st);
     }
     final int FLAG_CLOCK = 1;
-    int getDumpType() { return 'R'; }
-    int getPostCount() { return 1; }
+    @Override
+	int getDumpType() { return 'R'; }
+    @Override
+	int getPostCount() { return 1; }
 	
-    void setPoints() {
+    @Override
+	void setPoints() {
 	super.setPoints();
 	lead1 = interpPoint(point1, point2, 1-circleSize/dn);
     }
-    void draw(Graphics g) {
+    @Override
+	void draw(Graphics g) {
 	setBbox(point1, point2, circleSize);
 	setVoltageColor(g, volts[0]);
 	drawThickLine(g, point1, lead1);
@@ -45,17 +51,20 @@ class RailElm extends VoltageElm {
 	if (sim.dragElm != this)
 	    drawDots(g, point1, lead1, curcount);
     }
-    double getVoltageDiff() { return volts[0]; }
-    void stamp() {
+    @Override
+	double getVoltageDiff() { return volts[0]; }
+    @Override
+	void stamp() {
 	if (waveform == WF_DC)
 	    sim.stampVoltageSource(0, nodes[0], voltSource, getVoltage());
 	else
 	    sim.stampVoltageSource(0, nodes[0], voltSource);
     }
-    void doStep() {
+    @Override
+	void doStep() {
 	if (waveform != WF_DC)
 	    sim.updateVoltageSource(0, nodes[0], voltSource, getVoltage());
     }
-    boolean hasGroundConnection(int n1) { return true; }
-    int getShortcut() { return 'V'; }
+    @Override
+	boolean hasGroundConnection(int n1) { return true; }
 }

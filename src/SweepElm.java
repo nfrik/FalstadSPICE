@@ -1,4 +1,7 @@
-import java.awt.*;
+
+import java.awt.Checkbox;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.util.StringTokenizer;
 
 class SweepElm extends CircuitElm {
@@ -22,19 +25,24 @@ class SweepElm extends CircuitElm {
 	sweepTime = new Double(st.nextToken()).doubleValue();
 	reset();
     }
-    int getDumpType() { return 170; }
-    int getPostCount() { return 1; }
+    @Override
+	int getDumpType() { return 170; }
+    @Override
+	int getPostCount() { return 1; }
     final int circleSize = 17;
 
-    String dump() {
+    @Override
+	String dump() {
 	return super.dump() + " " + minF + " " + maxF + " " + maxV + " " +
 	    sweepTime;
     }
-    void setPoints() {
+    @Override
+	void setPoints() {
 	super.setPoints();
 	lead1 = interpPoint(point1, point2, 1-circleSize/dn);
     }
-    void draw(Graphics g) {
+    @Override
+	void draw(Graphics g) {
 	setBbox(point1, point2, circleSize);
 	setVoltageColor(g, volts[0]);
 	drawThickLine(g, point1, lead1);
@@ -74,7 +82,8 @@ class SweepElm extends CircuitElm {
 	    drawDots(g, point1, lead1, curcount);
     }
 	
-    void stamp() {
+    @Override
+	void stamp() {
 	sim.stampVoltageSource(0, nodes[0], voltSource);
     }
     double fadd, fmul, freqTime, savedTimeStep;
@@ -94,14 +103,16 @@ class SweepElm extends CircuitElm {
 	}
 	savedTimeStep = sim.timeStep;
     }
-    void reset() {
+    @Override
+	void reset() {
 	frequency = minF;
 	freqTime = 0;
 	dir = 1;
 	setParams();
     }
     double v;
-    void startIteration() {
+    @Override
+	void startIteration() {
 	// has timestep been changed?
 	if (sim.timeStep != savedTimeStep)
 	    setParams();
@@ -122,23 +133,29 @@ class SweepElm extends CircuitElm {
 	    dir = 1;
 	}
     }
-    void doStep() {
+    @Override
+	void doStep() {
 	sim.updateVoltageSource(0, nodes[0], voltSource, v);
     }
 	
-    double getVoltageDiff() { return volts[0]; }
-    int getVoltageSourceCount() { return 1; }
-    boolean hasGroundConnection(int n1) { return true; }
-    void getInfo(String arr[]) {
+    @Override
+	double getVoltageDiff() { return volts[0]; }
+    @Override
+	int getVoltageSourceCount() { return 1; }
+    @Override
+	boolean hasGroundConnection(int n1) { return true; }
+    @Override
+	void getInfo(String arr[]) {
 	arr[0] = "sweep " + (((flags & FLAG_LOG) == 0) ? "(linear)" : "(log)");
 	arr[1] = "I = " + getCurrentDText(getCurrent());
 	arr[2] = "V = " + getVoltageText(volts[0]);
 	arr[3] = "f = " + getUnitText(frequency, "Hz");
-	arr[4] = "range = " + getUnitText(minF, "Hz") + " .. " +
+	arr[4] = "range = " + getUnitText(minF, "Hz") + " " +
 	    getUnitText(maxF, "Hz");
 	arr[5] = "time = " + getUnitText(sweepTime, "s");
     }
-    public EditInfo getEditInfo(int n) {
+    @Override
+	public EditInfo getEditInfo(int n) {
 	if (n == 0)
 	    return new EditInfo("Min Frequency (Hz)", minF, 0, 0);
 	if (n == 1)
@@ -159,7 +176,8 @@ class SweepElm extends CircuitElm {
 	}
 	return null;
     }
-    public void setEditValue(int n, EditInfo ei) {
+    @Override
+	public void setEditValue(int n, EditInfo ei) {
 	double maxfreq = 1/(8*sim.timeStep);
 	if (n == 0) {
 	    minF = ei.value;

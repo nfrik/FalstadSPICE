@@ -1,4 +1,8 @@
-import java.awt.*;
+
+import java.awt.Checkbox;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.util.StringTokenizer;
 
 class ProbeElm extends CircuitElm {
@@ -8,10 +12,12 @@ class ProbeElm extends CircuitElm {
 		    StringTokenizer st) {
 	super(xa, ya, xb, yb, f);
     }
-    int getDumpType() { return 'p'; }
+    @Override
+	int getDumpType() { return 'p'; }
 	
     Point center;
-    void setPoints() {
+    @Override
+	void setPoints() {
 	super.setPoints();
 	// swap points so that we subtract higher from lower
 	if (point2.y < point1.y) {
@@ -21,7 +27,8 @@ class ProbeElm extends CircuitElm {
 	}
 	center = interpPoint(point1, point2, .5);
     }
-    void draw(Graphics g) {
+    @Override
+	void draw(Graphics g) {
 	int hs = 8;
 	setBbox(point1, point2, hs);
 	boolean selected = (needsHighlight() || sim.plotYElm == this);
@@ -52,12 +59,15 @@ class ProbeElm extends CircuitElm {
 	return (flags & FLAG_SHOWVOLTAGE) != 0;
     }
 
-    void getInfo(String arr[]) {
+    @Override
+	void getInfo(String arr[]) {
 	arr[0] = "scope probe";
 	arr[1] = "Vd = " + getVoltageText(getVoltageDiff());
     }
-    boolean getConnection(int n1, int n2) { return false; }
+    @Override
+	boolean getConnection(int n1, int n2) { return false; }
 
+	@Override
 	public EditInfo getEditInfo(int n) {
 	    if (n == 0) {
 		EditInfo ei = new EditInfo("", 0, -1, -1);
@@ -66,6 +76,7 @@ class ProbeElm extends CircuitElm {
 	    }
 	    return null;
 	}
+	@Override
 	public void setEditValue(int n, EditInfo ei) {
 	    if (n == 0) {
 		if (ei.checkbox.getState())

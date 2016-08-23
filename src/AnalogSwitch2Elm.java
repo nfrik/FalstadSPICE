@@ -1,4 +1,6 @@
-import java.awt.*;
+
+import java.awt.Graphics;
+import java.awt.Point;
 import java.util.StringTokenizer;
 
 class AnalogSwitch2Elm extends AnalogSwitchElm {
@@ -12,7 +14,8 @@ class AnalogSwitch2Elm extends AnalogSwitchElm {
 
     final int openhs = 16;
     Point swposts[], swpoles[], ctlPoint;
-    void setPoints() {
+    @Override
+	void setPoints() {
 	super.setPoints();
 	calcLeads(32);
 	swposts = newPointArray(2);
@@ -21,9 +24,11 @@ class AnalogSwitch2Elm extends AnalogSwitchElm {
 	interpPoint2(point1, point2, swposts[0], swposts[1], 1, openhs);
 	ctlPoint = interpPoint(point1, point2, .5, openhs);
     }
-    int getPostCount() { return 4; }
+    @Override
+	int getPostCount() { return 4; }
 
-    void draw(Graphics g) {
+    @Override
+	void draw(Graphics g) {
 	setBbox(point1, point2, openhs);
 
 	// draw first lead
@@ -49,24 +54,29 @@ class AnalogSwitch2Elm extends AnalogSwitchElm {
 	drawPosts(g);
     }
 	
-    Point getPost(int n) {
+    @Override
+	Point getPost(int n) {
 	return (n == 0) ? point1 : (n == 3) ? ctlPoint : swposts[n-1];
     }
-    int getDumpType() { return 160; }
+    @Override
+	int getDumpType() { return 160; }
 
-    void calculateCurrent() {
+    @Override
+	void calculateCurrent() {
 	if (open)
 	    current = (volts[0]-volts[2])/r_on;
 	else
 	    current = (volts[0]-volts[1])/r_on;
     }
 	
-    void stamp() {
+    @Override
+	void stamp() {
 	sim.stampNonLinear(nodes[0]);
 	sim.stampNonLinear(nodes[1]);
 	sim.stampNonLinear(nodes[2]);
     }
-    void doStep() {
+    @Override
+	void doStep() {
 	open = (volts[3] < 2.5);
 	if ((flags & FLAG_INVERT) != 0)
 	    open = !open;
@@ -79,12 +89,14 @@ class AnalogSwitch2Elm extends AnalogSwitchElm {
 	}
     }
 	
-    boolean getConnection(int n1, int n2) {
+    @Override
+	boolean getConnection(int n1, int n2) {
 	if (n1 == 3 || n2 == 3)
 	    return false;
 	return true;
     }
-    void getInfo(String arr[]) {
+    @Override
+	void getInfo(String arr[]) {
 	arr[0] = "analog switch (SPDT)";
 	arr[1] = "I = " + getCurrentDText(getCurrent());
     }

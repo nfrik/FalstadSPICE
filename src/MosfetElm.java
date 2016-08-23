@@ -1,4 +1,9 @@
-import java.awt.*;
+
+import java.awt.Checkbox;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Polygon;
 import java.util.StringTokenizer;
 
     class MosfetElm extends CircuitElm {
@@ -26,17 +31,22 @@ import java.util.StringTokenizer;
 	}
 	double getDefaultThreshold() { return 1.5; }
 	double getBeta() { return .02; }
+	@Override
 	boolean nonLinear() { return true; }
 	boolean drawDigital() { return (flags & FLAG_DIGITAL) != 0; }
+	@Override
 	void reset() {
 	    lastv1 = lastv2 = volts[0] = volts[1] = volts[2] = curcount = 0;
 	}
+	@Override
 	String dump() {
 	    return super.dump() + " " + vt;
 	}
+	@Override
 	int getDumpType() { return 'f'; }
 	final int hs = 16;
 	
+	@Override
 	void draw(Graphics g) {
 	    setBbox(point1, point2, hs);
 	    setVoltageColor(g, volts[1]);
@@ -89,17 +99,22 @@ import java.util.StringTokenizer;
 	    drawDots(g, drn[1], drn[0], curcount);
 	    drawPosts(g);
 	}
+	@Override
 	Point getPost(int n) {
 	    return (n == 0) ? point1 : (n == 1) ? src[0] : drn[0];
 	}
+	@Override
 	double getCurrent() { return ids; }
+	@Override
 	double getPower() { return ids*(volts[2]-volts[1]); }
+	@Override
 	int getPostCount() { return 3; }
 
 	int pcircler;
 	Point src[], drn[], gate[], pcircle;
 	Polygon arrowPoly;
 	
+	@Override
 	void setPoints() {
 	    super.setPoints();
 
@@ -134,10 +149,12 @@ import java.util.StringTokenizer;
 	int mode = 0;
 	double gm = 0;
 	
+	@Override
 	void stamp() {
 	    sim.stampNonLinear(nodes[1]);
 	    sim.stampNonLinear(nodes[2]);
 	}
+	@Override
 	void doStep() {
 	    double vs[] = new double[3];
 	    vs[0] = volts[0];
@@ -223,14 +240,19 @@ import java.util.StringTokenizer;
 		(mode == 1) ? "linear" : "saturation";
 	    arr[5] = "gm = " + getUnitText(gm, "A/V");
 	}
+	@Override
 	void getInfo(String arr[]) {
 	    getFetInfo(arr, "MOSFET");
 	}
+	@Override
 	boolean canViewInScope() { return true; }
+	@Override
 	double getVoltageDiff() { return volts[2] - volts[1]; }
+	@Override
 	boolean getConnection(int n1, int n2) {
 	    return !(n1 == 0 || n2 == 0);
 	}
+	@Override
 	public EditInfo getEditInfo(int n) {
 	    if (n == 0)
 		return new EditInfo("Threshold Voltage", pnp*vt, .01, 5);
@@ -242,6 +264,7 @@ import java.util.StringTokenizer;
 		
 	    return null;
 	}
+	@Override
 	public void setEditValue(int n, EditInfo ei) {
 	    if (n == 0)
 		vt = pnp*ei.value;

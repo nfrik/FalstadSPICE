@@ -1,4 +1,8 @@
-import java.awt.*;
+
+import java.awt.Choice;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.util.StringTokenizer;
 
 class VoltageElm extends CircuitElm {
@@ -43,8 +47,10 @@ class VoltageElm extends CircuitElm {
 	}
 	reset();
     }
-    int getDumpType() { return 'v'; }
-    String dump() {
+    @Override
+	int getDumpType() { return 'v'; }
+    @Override
+	String dump() {
 	return super.dump() + " " + waveform + " " + frequency + " " +
 	    maxVoltage + " " + bias + " " + phaseShift + " " +
 	    dutyCycle;
@@ -54,7 +60,8 @@ class VoltageElm extends CircuitElm {
       System.out.print("v current set to " + c + "\n");
       }*/
 
-    void reset() {
+    @Override
+	void reset() {
 	freqTimeZero = 0;
 	curcount = 0;
     }
@@ -63,14 +70,16 @@ class VoltageElm extends CircuitElm {
 	    return x*(2/pi)-1;
 	return 1-(x-pi)*(2/pi);
     }
-    void stamp() {
+    @Override
+	void stamp() {
 	if (waveform == WF_DC)
 	    sim.stampVoltageSource(nodes[0], nodes[1], voltSource,
 			       getVoltage());
 	else
 	    sim.stampVoltageSource(nodes[0], nodes[1], voltSource);
     }
-    void doStep() {
+    @Override
+	void doStep() {
 	if (waveform != WF_DC)
 	    sim.updateVoltageSource(nodes[0], nodes[1], voltSource,
 				getVoltage());
@@ -93,11 +102,13 @@ class VoltageElm extends CircuitElm {
 	}
     }
     final int circleSize = 17;
-    void setPoints() {
+    @Override
+	void setPoints() {
 	super.setPoints();
 	calcLeads((waveform == WF_DC || waveform == WF_VAR) ? 8 : circleSize*2);
     }
-    void draw(Graphics g) {
+    @Override
+	void draw(Graphics g) {
 	setBbox(x, y, x2, y2);
 	draw2Leads(g);
 	if (waveform == WF_DC) {
@@ -192,12 +203,16 @@ class VoltageElm extends CircuitElm {
 	}
     }
 	
-    int getVoltageSourceCount() {
+    @Override
+	int getVoltageSourceCount() {
 	return 1;
     }
-    double getPower() { return -getVoltageDiff()*current; }
-    double getVoltageDiff() { return volts[1] - volts[0]; }
-    void getInfo(String arr[]) {
+    @Override
+	double getPower() { return -getVoltageDiff()*current; }
+    @Override
+	double getVoltageDiff() { return volts[1] - volts[0]; }
+    @Override
+	void getInfo(String arr[]) {
 	switch (waveform) {
 	case WF_DC: case WF_VAR:
 	    arr[0] = "voltage source"; break;
@@ -222,7 +237,8 @@ class VoltageElm extends CircuitElm {
 	    arr[i++] = "P = " + getUnitText(getPower(), "W");
 	}
     }
-    public EditInfo getEditInfo(int n) {
+    @Override
+	public EditInfo getEditInfo(int n) {
 	if (n == 0)
 	    return new EditInfo(waveform == WF_DC ? "Voltage" :
 				"Max Voltage", maxVoltage, -20, 20);
@@ -252,7 +268,8 @@ class VoltageElm extends CircuitElm {
 		setDimensionless();
 	return null;
     }
-    public void setEditValue(int n, EditInfo ei) {
+    @Override
+	public void setEditValue(int n, EditInfo ei) {
 	if (n == 0)
 	    maxVoltage = ei.value;
 	if (n == 3)

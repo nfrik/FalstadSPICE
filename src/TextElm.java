@@ -1,17 +1,21 @@
-import java.awt.*;
+
+import java.awt.Checkbox;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-class TextElm extends GraphicElm {
+class TextElm extends CircuitElm {
     String text;
-    Vector<String> lines;
+    Vector lines;
     int size;
     final int FLAG_CENTER = 1;
     final int FLAG_BAR = 2;
     public TextElm(int xx, int yy) {
 	super(xx, yy);
 	text = "hello";
-	lines = new Vector<String>();
+	lines = new Vector();
 	lines.add(text);
 	size = 24;
     }
@@ -26,7 +30,7 @@ class TextElm extends GraphicElm {
     }
     void split() {
 	int i;
-	lines = new Vector<String>();
+	lines = new Vector();
 	StringBuffer sb = new StringBuffer(text);
 	for (i = 0; i < sb.length(); i++) {
 	    char c = sb.charAt(i);
@@ -43,20 +47,21 @@ class TextElm extends GraphicElm {
 	}
 	lines.add(sb.toString());
     }
-    String dump() {
+    @Override
+	String dump() {
 	return super.dump() + " " + size + " " + text;
     }
-    int getDumpType() { return 'x'; }
-    void drag(int xx, int yy) {
+    @Override
+	int getDumpType() { return 'x'; }
+    @Override
+	void drag(int xx, int yy) {
 	x = xx;
 	y = yy;
 	x2 = xx+16;
 	y2 = yy;
     }
-    void draw(Graphics g) {
-	//Graphics2D g2 = (Graphics2D)g;
-	//g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-	//	RenderingHints.VALUE_ANTIALIAS_ON);
+    @Override
+	void draw(Graphics g) {
 	g.setColor(needsHighlight() ? selectColor : lightGrayColor);
 	Font f = new Font("SansSerif", 0, size);
 	g.setFont(f);
@@ -86,7 +91,8 @@ class TextElm extends GraphicElm {
 	x2 = boundingBox.x + boundingBox.width;
 	y2 = boundingBox.y + boundingBox.height;
     }
-    public EditInfo getEditInfo(int n) {
+    @Override
+	public EditInfo getEditInfo(int n) {
 	if (n == 0) {
 	    EditInfo ei = new EditInfo("Text", 0, -1, -1);
 	    ei.text = text;
@@ -108,7 +114,8 @@ class TextElm extends GraphicElm {
 	}
 	return null;
     }
-    public void setEditValue(int n, EditInfo ei) {
+    @Override
+	public void setEditValue(int n, EditInfo ei) {
 	if (n == 0) {
 	    text = ei.textf.getText();
 	    split();
@@ -128,11 +135,13 @@ class TextElm extends GraphicElm {
 		flags &= ~FLAG_CENTER;
 	}
     }
-    boolean isCenteredText() { return (flags & FLAG_CENTER) != 0; }
-    void getInfo(String arr[]) {
+    @Override
+	boolean isCenteredText() { return (flags & FLAG_CENTER) != 0; }
+    @Override
+	void getInfo(String arr[]) {
 	arr[0] = text;
     }
     @Override
-    int getShortcut() { return 't'; }
+	int getPostCount() { return 0; }
 }
 

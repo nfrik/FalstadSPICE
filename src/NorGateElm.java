@@ -1,4 +1,4 @@
-import java.awt.*;
+
 import java.util.StringTokenizer;
 
     class NorGateElm extends OrGateElm {
@@ -7,8 +7,10 @@ import java.util.StringTokenizer;
 			   StringTokenizer st) {
 	    super(xa, ya, xb, yb, f, st);
 	}
+	@Override
 	String getGateName() { return "NOR gate"; }
+	@Override
 	boolean isInverting() { return true; }
+	@Override
 	int getDumpType() { return 153; }
-	int getShortcut() { return '#'; }
     }

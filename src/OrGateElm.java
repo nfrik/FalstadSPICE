@@ -1,4 +1,5 @@
-import java.awt.*;
+
+import java.awt.Point;
 import java.util.StringTokenizer;
 
     class OrGateElm extends GateElm {
@@ -7,7 +8,9 @@ import java.util.StringTokenizer;
 			  StringTokenizer st) {
 	    super(xa, ya, xb, yb, f, st);
 	}
+	@Override
 	String getGateName() { return "OR gate"; }
+	@Override
 	void setPoints() {
 	    super.setPoints();
 
@@ -41,6 +44,7 @@ import java.util.StringTokenizer;
 	    }
 	    gatePoly = createPolygon(triPoints);
 	}
+	@Override
 	boolean calcFunction() {
 	    int i;
 	    boolean f = false;
@@ -48,6 +52,6 @@ import java.util.StringTokenizer;
 		f |= getInput(i);
 	    return f;
 	}
+	@Override
 	int getDumpType() { return 152; }
-	int getShortcut() { return '3'; }
     }

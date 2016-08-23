@@ -1,3 +1,4 @@
+
     class ClockElm extends RailElm {
 	public ClockElm(int xx, int yy) {
 	    super(xx, yy, WF_SQUARE);
@@ -6,6 +7,6 @@
 	    frequency = 100;
 	    flags |= FLAG_CLOCK;
 	}
+	@Override
 	Class getDumpClass() { return RailElm.class; }
-	int getShortcut() { return 0; }
     }

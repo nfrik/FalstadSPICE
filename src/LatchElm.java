@@ -1,4 +1,4 @@
-import java.awt.*;
+
 import java.util.StringTokenizer;
 
 class LatchElm extends ChipElm {
@@ -7,10 +7,13 @@ class LatchElm extends ChipElm {
 		    StringTokenizer st) {
 	super(xa, ya, xb, yb, f, st);
     }
-    String getChipName() { return "Latch"; }
-    boolean needsBits() { return true; }
+    @Override
+	String getChipName() { return "Latch"; }
+    @Override
+	boolean needsBits() { return true; }
     int loadPin;
-    void setupPins() {
+    @Override
+	void setupPins() {
 	sizeX = 2;
 	sizeY = bits+1;
 	pins = new Pin[getPostCount()];
@@ -21,19 +24,26 @@ class LatchElm extends ChipElm {
 	    pins[i+bits] = new Pin(bits-1-i, SIDE_E, "O");
 	    pins[i+bits].output = true;
 	}
-	pins[loadPin = bits*2] = new Pin(bits, SIDE_W, "Ld");
+	loadPin = bits*2;
+	pins[loadPin] = new Pin(bits, SIDE_W, "Ld");
 	allocNodes();
     }
     boolean lastLoad = false;
-    void execute() {
-	int i;
-	if (pins[loadPin].value && !lastLoad)
-	    for (i = 0; i != bits; i++)
-		pins[i+bits].value = pins[i].value;
-	lastLoad = pins[loadPin].value;
+    
+    @Override
+	void execute() {
+    	int i;
+    	if (pins[loadPin].value && !lastLoad)
+    		for (i = 0; i != bits; i++)
+    			pins[i+bits].value = pins[i].value;
+		lastLoad = pins[loadPin].value;
     }
-    int getVoltageSourceCount() { return bits; }
-    int getPostCount() { return bits*2+1; }
-    int getDumpType() { return 168; }
+    
+    @Override
+	int getVoltageSourceCount() { return bits; }
+    @Override
+	int getPostCount() { return bits*2+1; }
+    @Override
+	int getDumpType() { return 168; }
 }
     

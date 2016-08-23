@@ -1,4 +1,4 @@
-import java.awt.*;
+
 import java.util.StringTokenizer;
 
     class DecadeElm extends ChipElm {
@@ -7,8 +7,11 @@ import java.util.StringTokenizer;
 			    StringTokenizer st) {
 	    super(xa, ya, xb, yb, f, st);
 	}
+	@Override
 	String getChipName() { return "decade counter"; }
+	@Override
 	boolean needsBits() { return true; }
+	@Override
 	void setupPins() {
 	    sizeX = bits > 2 ? bits : 2;
 	    sizeY = 2;
@@ -25,25 +28,31 @@ import java.util.StringTokenizer;
 	    }
 	    allocNodes();
 	}
+	@Override
 	int getPostCount() { return bits+2; }
+	@Override
 	int getVoltageSourceCount() { return bits; }
+	@Override
 	void execute() {
 	    int i;
 	    if (pins[0].value && !lastClock) {
-		for (i = 0; i != bits; i++)
-		    if (pins[i+2].value)
-			break;
-		if (i < bits)
-		    pins[i++ +2].value = false;
-		i %= bits;
-		pins[i+2].value = true;
+			for (i = 0; i != bits; i++)
+			    if (pins[i+2].value) break;
+			if (i < bits)
+			    pins[i++ +2].value = false;
+			i %= bits;
+			pins[i+2].value = true;
 	    }
+	    
 	    if (!pins[1].value) {
-		for (i = 1; i != bits; i++)
-		    pins[i+2].value = false;
-		pins[2].value = true;
+			for (i = 1; i != bits; i++)
+			    pins[i+2].value = false;
+			pins[2].value = true;
 	    }
+	    
 	    lastClock = pins[0].value;
 	}
+	
+	@Override
 	int getDumpType() { return 163; }
     }

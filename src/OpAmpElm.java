@@ -1,4 +1,8 @@
-import java.awt.*;
+
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Polygon;
 import java.util.StringTokenizer;
 
     class OpAmpElm extends CircuitElm {
@@ -41,10 +45,13 @@ import java.util.StringTokenizer;
 	    gain = ((flags & FLAG_LOWGAIN) != 0) ? 1000 : 100000;
 	    
 	}
+	@Override
 	String dump() {
 	    return super.dump() + " " + maxOut + " " + minOut + " " + gbw;
 	}
+	@Override
 	boolean nonLinear() { return true; }
+	@Override
 	void draw(Graphics g) {
 	    setBbox(point1, point2, opheight*2);
 	    setVoltageColor(g, volts[0]);
@@ -63,6 +70,7 @@ import java.util.StringTokenizer;
 	    drawDots(g, point2, lead2, curcount);
 	    drawPosts(g);
 	}
+	@Override
 	double getPower() { return volts[2]*current; }
 	Point in1p[], in2p[], textp[];
 	Polygon triangle;
@@ -73,6 +81,7 @@ import java.util.StringTokenizer;
 	    opwidth = 13*s;
 	    flags = (flags & ~FLAG_SMALL) | ((s == 1) ? FLAG_SMALL : 0);
 	}
+	@Override
 	void setPoints() {
 	    super.setPoints();
 	    if (dn > 150 && this == sim.dragElm)
@@ -95,11 +104,15 @@ import java.util.StringTokenizer;
 	    triangle = createPolygon(tris[0], tris[1], lead2);
 	    plusFont = new Font("SansSerif", 0, opsize == 2 ? 14 : 10);
 	}
+	@Override
 	int getPostCount() { return 3; }
+	@Override
 	Point getPost(int n) {
 	    return (n == 0) ? in1p[0] : (n == 1) ? in2p[0] : point2;
 	}
+	@Override
 	int getVoltageSourceCount() { return 1; }
+	@Override
 	void getInfo(String arr[]) {
 	    arr[0] = "op-amp";
 	    arr[1] = "V+ = " + getVoltageText(volts[1]);
@@ -115,11 +128,13 @@ import java.util.StringTokenizer;
 
 	double lastvd;
 
+	@Override
 	void stamp() {
 	    int vn = sim.nodeList.size()+voltSource;
 	    sim.stampNonLinear(vn);
 	    sim.stampMatrix(nodes[2], vn, 1);
 	}
+	@Override
 	void doStep() {
 	    double vd = volts[1] - volts[0];
 	    if (Math.abs(lastvd-vd) > .1)
@@ -151,12 +166,17 @@ import java.util.StringTokenizer;
 	}
 	// there is no current path through the op-amp inputs, but there
 	// is an indirect path through the output to ground.
+	@Override
 	boolean getConnection(int n1, int n2) { return false; }
+	@Override
 	boolean hasGroundConnection(int n1) {
 	    return (n1 == 2);
 	}
+	@Override
 	double getVoltageDiff() { return volts[2] - volts[1]; }
+	@Override
 	int getDumpType() { return 'a'; }
+	@Override
 	public EditInfo getEditInfo(int n) {
 	    if (n == 0)
 		return new EditInfo("Max Output (V)", maxOut, 1, 20);
@@ -164,6 +184,7 @@ import java.util.StringTokenizer;
 		return new EditInfo("Min Output (V)", minOut, -20, 0);
 	    return null;
 	}
+	@Override
 	public void setEditValue(int n, EditInfo ei) {
 	    if (n == 0)
 		maxOut = ei.value;

@@ -1,5 +1,10 @@
-import java.awt.*;
-import java.awt.event.*;
+
+import java.awt.Graphics;
+import java.awt.Label;
+import java.awt.Point;
+import java.awt.Scrollbar;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.util.StringTokenizer;
 
 class PotElm extends CircuitElm implements AdjustmentListener {
@@ -29,32 +34,39 @@ class PotElm extends CircuitElm implements AdjustmentListener {
     }
     void setup() {
     }
-    int getPostCount() { return 3; }
-    int getDumpType() { return 174; }
-    Point getPost(int n) {
+    @Override
+	int getPostCount() { return 3; }
+    @Override
+	int getDumpType() { return 174; }
+    @Override
+	Point getPost(int n) {
 	return (n == 0) ? point1 : (n == 1) ? point2 : post3;
     }
-    String dump() { return super.dump() + " " + maxResistance + " " +
+    @Override
+	String dump() { return super.dump() + " " + maxResistance + " " +
 	    position + " " + sliderText; }
     void createSlider() {
-	sim.main.add(label = new Label(sliderText, Label.CENTER));
+	CirSim.main.add(label = new Label(sliderText, Label.CENTER));
 	int value = (int) (position*100);
-	sim.main.add(slider = new Scrollbar(Scrollbar.HORIZONTAL, value, 1, 0, 101));
-	sim.main.validate();
+	CirSim.main.add(slider = new Scrollbar(Scrollbar.HORIZONTAL, value, 1, 0, 101));
+	CirSim.main.validate();
 	slider.addAdjustmentListener(this);
     }
-    public void adjustmentValueChanged(AdjustmentEvent e) {
+    @Override
+	public void adjustmentValueChanged(AdjustmentEvent e) {
 	sim.analyzeFlag = true;
 	setPoints();
     }
-    void delete() {
-	sim.main.remove(label);
-	sim.main.remove(slider);
+    @Override
+	void delete() {
+	CirSim.main.remove(label);
+	CirSim.main.remove(slider);
     }
     Point post3, corner2, arrowPoint, midpoint, arrow1, arrow2;
     Point ps3, ps4;
     int bodyLen;
-    void setPoints() {
+    @Override
+	void setPoints() {
 	super.setPoints();
 	int offset = 0;
 	if (abs(dx) > abs(dy)) {
@@ -89,7 +101,8 @@ class PotElm extends CircuitElm implements AdjustmentListener {
 	ps4 = new Point();
     }
 	
-    void draw(Graphics g) {
+    @Override
+	void draw(Graphics g) {
 	int segments = 16;
 	int i;
 	int ox = 0;
@@ -155,26 +168,30 @@ class PotElm extends CircuitElm implements AdjustmentListener {
 	}
 	drawPosts(g);
     }
-    void calculateCurrent() {
+    @Override
+	void calculateCurrent() {
 	current1 = (volts[0]-volts[2])/resistance1;
 	current2 = (volts[1]-volts[2])/resistance2;
 	current3 = -current1-current2;
     }
-    void stamp() {
+    @Override
+	void stamp() {
 	resistance1 = maxResistance*position;
 	resistance2 = maxResistance*(1-position);
 	sim.stampResistor(nodes[0], nodes[2], resistance1);
 	sim.stampResistor(nodes[2], nodes[1], resistance2);
     }
-    void getInfo(String arr[]) {
+    @Override
+	void getInfo(String arr[]) {
 	arr[0] = "potentiometer";
 	arr[1] = "Vd = " + getVoltageDText(getVoltageDiff());
-	arr[2] = "R1 = " + getUnitText(resistance1, sim.ohmString);
-	arr[3] = "R2 = " + getUnitText(resistance2, sim.ohmString);
+	arr[2] = "R1 = " + getUnitText(resistance1, CirSim.ohmString);
+	arr[3] = "R2 = " + getUnitText(resistance2, CirSim.ohmString);
 	arr[4] = "I1 = " + getCurrentDText(current1);
 	arr[5] = "I2 = " + getCurrentDText(current2);
     }
-    public EditInfo getEditInfo(int n) {
+    @Override
+	public EditInfo getEditInfo(int n) {
 	// ohmString doesn't work here on linux
 	if (n == 0)
 	    return new EditInfo("Resistance (ohms)", maxResistance, 0, 0);
@@ -185,7 +202,8 @@ class PotElm extends CircuitElm implements AdjustmentListener {
 	}
 	return null;
     }
-    public void setEditValue(int n, EditInfo ei) {
+    @Override
+	public void setEditValue(int n, EditInfo ei) {
 	if (n == 0)
 	    maxResistance = ei.value;
 	if (n == 1) {

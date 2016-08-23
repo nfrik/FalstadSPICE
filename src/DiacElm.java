@@ -1,8 +1,7 @@
-// stub implementation of DiacElm, based on SparkGapElm
-// FIXME need to add DiacElm.java to srclist
-// FIXME need to uncomment DiacElm line from CirSim.java
 
-import java.awt.*;
+
+import java.awt.Graphics;
+import java.awt.Point;
 import java.util.StringTokenizer;
 
 class DiacElm extends CircuitElm {
@@ -25,21 +24,26 @@ class DiacElm extends CircuitElm {
 	breakdown = new Double(st.nextToken()).doubleValue();
 	holdcurrent = new Double(st.nextToken()).doubleValue();
     }
-    boolean nonLinear() {return true;}
-    int getDumpType() { return 203; }
-    String dump() {
+    @Override
+	boolean nonLinear() {return true;}
+    @Override
+	int getDumpType() { return 185; }
+    @Override
+	String dump() {
 	return super.dump() + " " + onresistance + " " + offresistance + " "
 	    + breakdown + " " + holdcurrent;
     }
     Point ps3, ps4;
-    void setPoints() {
+    @Override
+	void setPoints() {
 	super.setPoints();
 	calcLeads(32);
 	ps3 = new Point();
 	ps4 = new Point();
     }
     
-    void draw(Graphics g) {
+    @Override
+	void draw(Graphics g) {
 	// FIXME need to draw Diac
 	int i;
 	double v1 = volts[0];
@@ -51,40 +55,46 @@ class DiacElm extends CircuitElm {
 	drawPosts(g);
     }
     
-    void calculateCurrent() {
+    @Override
+	void calculateCurrent() {
 	double vd = volts[0] - volts[1];
 	if(state)
 	    current = vd/onresistance;
 	else
 	    current = vd/offresistance;
     }
-    void startIteration() {
+    @Override
+	void startIteration() {
 	double vd = volts[0] - volts[1];
 	if(Math.abs(current) < holdcurrent) state = false;
 	if(Math.abs(vd) > breakdown) state = true;
 	//System.out.print(this + " res current set to " + current + "\n");
     }
-    void doStep() {
+    @Override
+	void doStep() {
 	if(state)
 	    sim.stampResistor(nodes[0], nodes[1], onresistance);
 	else
 	    sim.stampResistor(nodes[0], nodes[1], offresistance);
     }
-    void stamp() {
+    @Override
+	void stamp() {
 	sim.stampNonLinear(nodes[0]);
 	sim.stampNonLinear(nodes[1]);
     }
-    void getInfo(String arr[]) {
+    @Override
+	void getInfo(String arr[]) {
 	// FIXME
 	arr[0] = "spark gap";
 	getBasicInfo(arr);
 	arr[3] = state ? "on" : "off";
-	arr[4] = "Ron = " + getUnitText(onresistance, sim.ohmString);
-	arr[5] = "Roff = " + getUnitText(offresistance, sim.ohmString);
+	arr[4] = "Ron = " + getUnitText(onresistance, CirSim.ohmString);
+	arr[5] = "Roff = " + getUnitText(offresistance, CirSim.ohmString);
 	arr[6] = "Vbrkdn = " + getUnitText(breakdown, "V");
 	arr[7] = "Ihold = " + getUnitText(holdcurrent, "A");
     }
-    public EditInfo getEditInfo(int n) {
+    @Override
+	public EditInfo getEditInfo(int n) {
 	if (n == 0)
 	    return new EditInfo("On resistance (ohms)", onresistance, 0, 0);
 	if (n == 1)
@@ -95,7 +105,8 @@ class DiacElm extends CircuitElm {
 	    return new EditInfo("Hold current (amps)", holdcurrent, 0, 0);
 	return null;
     }
-    public void setEditValue(int n, EditInfo ei) {
+    @Override
+	public void setEditValue(int n, EditInfo ei) {
 	if (ei.value > 0 && n == 0)
 	    onresistance = ei.value;
 	if (ei.value > 0 && n == 1)
@@ -105,5 +116,7 @@ class DiacElm extends CircuitElm {
 	if (ei.value > 0 && n == 3)
 	    holdcurrent = ei.value;
     }
+    @Override
+	boolean needsShortcut() { return false; }
 }
 

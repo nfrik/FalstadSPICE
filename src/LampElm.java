@@ -1,4 +1,7 @@
-import java.awt.*;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.util.StringTokenizer;
 
     class LampElm extends CircuitElm {
@@ -22,20 +25,24 @@ import java.util.StringTokenizer;
 	    warmTime = new Double(st.nextToken()).doubleValue();
 	    coolTime = new Double(st.nextToken()).doubleValue();
 	}
+	@Override
 	String dump() {
 	    return super.dump() + " " + temp + " " + nom_pow + " " + nom_v +
 		" " + warmTime + " " + coolTime;
 	}
+	@Override
 	int getDumpType() { return 181; }
 
 	Point bulbLead[], filament[], bulb;
 	int bulbR;
 
+	@Override
 	void reset() {
 	    super.reset();
 	    temp = roomTemp;
 	}
 	final int filament_len = 24;
+	@Override
 	void setPoints() {
 	    super.setPoints();
 	    int llen = 16;
@@ -73,6 +80,7 @@ import java.util.StringTokenizer;
 	    return Color.white;
 	}
 	
+	@Override
 	void draw(Graphics g) {
 	    double v1 = volts[0];
 	    double v2 = volts[1];
@@ -107,15 +115,19 @@ import java.util.StringTokenizer;
 	    drawPosts(g);
 	}
 
+	@Override
 	void calculateCurrent() {
 	    current = (volts[0]-volts[1])/resistance;
 	    //System.out.print(this + " res current set to " + current + "\n");
 	}
+	@Override
 	void stamp() {
 	    sim.stampNonLinear(nodes[0]);
 	    sim.stampNonLinear(nodes[1]);
 	}
+	@Override
 	boolean nonLinear() { return true; }
+	@Override
 	void startIteration() {
 	    // based on http://www.intusoft.com/nlpdf/nl11.pdf
 	    double nom_r = nom_v*nom_v/nom_pow;
@@ -133,16 +145,19 @@ import java.util.StringTokenizer;
 	    temp -= sim.timeStep*(temp-roomTemp)/(capc*cr);
 	    //System.out.println(capw + " " + capc + " " + temp + " " +resistance);
 	}
+	@Override
 	void doStep() {
 	    sim.stampResistor(nodes[0], nodes[1], resistance);
 	}
+	@Override
 	void getInfo(String arr[]) {
 	    arr[0] = "lamp";
 	    getBasicInfo(arr);
-	    arr[3] = "R = " + getUnitText(resistance, sim.ohmString);
+	    arr[3] = "R = " + getUnitText(resistance, CirSim.ohmString);
 	    arr[4] = "P = " + getUnitText(getPower(), "W");
 	    arr[5] = "T = " + ((int) temp) + " K";
 	}
+	@Override
 	public EditInfo getEditInfo(int n) {
 	    // ohmString doesn't work here on linux
 	    if (n == 0)
@@ -155,6 +170,7 @@ import java.util.StringTokenizer;
 		return new EditInfo("Cooldown Time (s)", coolTime, 0, 0);
 	    return null;
 	}
+	@Override
 	public void setEditValue(int n, EditInfo ei) {
 	    if (n == 0 && ei.value > 0)
 		nom_pow = ei.value;

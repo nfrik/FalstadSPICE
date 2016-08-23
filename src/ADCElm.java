@@ -1,4 +1,4 @@
-import java.awt.*;
+
 import java.util.StringTokenizer;
 
 class ADCElm extends ChipElm {
@@ -7,9 +7,12 @@ class ADCElm extends ChipElm {
 		  StringTokenizer st) {
 	super(xa, ya, xb, yb, f, st);
     }
-    String getChipName() { return "ADC"; }
-    boolean needsBits() { return true; }
-    void setupPins() {
+    @Override
+	String getChipName() { return "ADC"; }
+    @Override
+	boolean needsBits() { return true; }
+    @Override
+	void setupPins() {
 	sizeX = 2;
 	sizeY = bits > 2 ? bits : 2;
 	pins = new Pin[getPostCount()];
@@ -22,7 +25,8 @@ class ADCElm extends ChipElm {
 	pins[bits+1] = new Pin(sizeY-1, SIDE_W, "V+");
 	allocNodes();
     }
-    void execute() {
+    @Override
+	void execute() {
 	int imax = (1<<bits)-1;
 	// if we round, the half-flash doesn't work
 	double val = imax*volts[bits]/volts[bits+1]; // + .5;
@@ -32,8 +36,11 @@ class ADCElm extends ChipElm {
 	for (i = 0; i != bits; i++)
 	    pins[i].value = ((ival & (1<<i)) != 0);
     }
-    int getVoltageSourceCount() { return bits; }
-    int getPostCount() { return bits+2; }
-    int getDumpType() { return 167; }
+    @Override
+	int getVoltageSourceCount() { return bits; }
+    @Override
+	int getPostCount() { return bits+2; }
+    @Override
+	int getDumpType() { return 167; }
 }
     

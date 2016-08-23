@@ -1,4 +1,7 @@
-import java.awt.*;
+
+import java.awt.Checkbox;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.util.StringTokenizer;
 
 class SwitchElm extends CircuitElm {
@@ -30,20 +33,24 @@ class SwitchElm extends CircuitElm {
 	momentary = new Boolean(st.nextToken()).booleanValue();
 	posCount = 2;
     }
-    int getDumpType() { return 's'; }
-    String dump() {
+    @Override
+	int getDumpType() { return 's'; }
+    @Override
+	String dump() {
 	return super.dump() + " " + position + " " + momentary;
     }
 
     Point ps, ps2;
-    void setPoints() {
+    @Override
+	void setPoints() {
 	super.setPoints();
 	calcLeads(32);
 	ps  = new Point();
 	ps2 = new Point();
     }
 	
-    void draw(Graphics g) {
+    @Override
+	void draw(Graphics g) {
 	int openhs = 16;
 	int hs1 = (position == 1) ? 0 : 2;
 	int hs2 = (position == 1) ? openhs : 2;
@@ -62,15 +69,18 @@ class SwitchElm extends CircuitElm {
 	drawThickLine(g, ps, ps2);
 	drawPosts(g);
     }
-    void calculateCurrent() {
+    @Override
+	void calculateCurrent() {
 	if (position == 1)
 	    current = 0;
     }
-    void stamp() {
+    @Override
+	void stamp() {
 	if (position == 0)
 	    sim.stampVoltageSource(nodes[0], nodes[1], voltSource, 0);
     }
-    int getVoltageSourceCount() {
+    @Override
+	int getVoltageSourceCount() {
 	return (position == 1) ? 0 : 1;
     }
     void mouseUp() {
@@ -82,7 +92,8 @@ class SwitchElm extends CircuitElm {
 	if (position >= posCount)
 	    position = 0;
     }
-    void getInfo(String arr[]) {
+    @Override
+	void getInfo(String arr[]) {
 	arr[0] = (momentary) ? "push switch (SPST)" : "switch (SPST)";
 	if (position == 1) {
 	    arr[1] = "open";
@@ -93,9 +104,12 @@ class SwitchElm extends CircuitElm {
 	    arr[3] = "I = " + getCurrentDText(getCurrent());
 	}
     }
-    boolean getConnection(int n1, int n2) { return position == 0; }
-    boolean isWire() { return true; }
-    public EditInfo getEditInfo(int n) {
+    @Override
+	boolean getConnection(int n1, int n2) { return position == 0; }
+    @Override
+	boolean isWire() { return true; }
+    @Override
+	public EditInfo getEditInfo(int n) {
 	if (n == 0) {
 	    EditInfo ei = new EditInfo("", 0, -1, -1);
 	    ei.checkbox = new Checkbox("Momentary Switch", momentary);
@@ -103,9 +117,9 @@ class SwitchElm extends CircuitElm {
 	}
 	return null;
     }
-    public void setEditValue(int n, EditInfo ei) {
+    @Override
+	public void setEditValue(int n, EditInfo ei) {
 	if (n == 0)
 	    momentary = ei.checkbox.getState();
     }
-    int getShortcut() { return 's'; }
 }

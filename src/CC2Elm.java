@@ -1,4 +1,5 @@
-import java.awt.*;
+
+import java.awt.Graphics;
 import java.util.StringTokenizer;
 
     class CC2Elm extends ChipElm {
@@ -10,10 +11,13 @@ import java.util.StringTokenizer;
 	    super(xa, ya, xb, yb, f, st);
 	    gain = new Double(st.nextToken()).doubleValue();
 	}
+	@Override
 	String dump() {
 	    return super.dump() + " " + gain;
 	}
+	@Override
 	String getChipName() { return "CC2"; }
+	@Override
 	void setupPins() {
 	    sizeX = 2;
 	    sizeY = 3;
@@ -23,6 +27,7 @@ import java.util.StringTokenizer;
 	    pins[1] = new Pin(2, SIDE_W, "Y");
 	    pins[2] = new Pin(1, SIDE_E, "Z");
 	}
+	@Override
 	void getInfo(String arr[]) {
 	    arr[0] = (gain == 1) ? "CCII+" : "CCII-";
 	    arr[1] = "X,Y = " + getVoltageText(volts[0]);
@@ -30,6 +35,7 @@ import java.util.StringTokenizer;
 	    arr[3] = "I = " + getCurrentText(pins[0].current);
 	}
 	//boolean nonLinear() { return true; }
+	@Override
 	void stamp() {
 	    // X voltage = Y voltage
 	    sim.stampVoltageSource(0, nodes[0], pins[0].voltSource);
@@ -37,16 +43,21 @@ import java.util.StringTokenizer;
 	    // Z current = gain * X current
 	    sim.stampCCCS(0, nodes[2], pins[0].voltSource, gain);
 	}
+	@Override
 	void draw(Graphics g) {
 	    pins[2].current = pins[0].current * gain;
 	    drawChip(g);
 	}
+	@Override
 	int getPostCount() { return 3; }
+	@Override
 	int getVoltageSourceCount() { return 1; }
+	@Override
 	int getDumpType() { return 179; }
     }
 
 class CC2NegElm extends CC2Elm {
     public CC2NegElm(int xx, int yy) { super(xx, yy, -1); }
-    Class getDumpClass() { return CC2Elm.class; }
+    @Override
+	Class getDumpClass() { return CC2Elm.class; }
 }

@@ -1,16 +1,29 @@
-import java.awt.*;
+
+import java.awt.Choice;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.Label;
+import java.awt.LayoutManager;
+import java.awt.Scrollbar;
 
 class CircuitLayout implements LayoutManager {
     public CircuitLayout() {}
-    public void addLayoutComponent(String name, Component c) {}
-    public void removeLayoutComponent(Component c) {}
-    public Dimension preferredLayoutSize(Container target) {
+    @Override
+	public void addLayoutComponent(String name, Component c) {}
+    @Override
+	public void removeLayoutComponent(Component c) {}
+    @Override
+	public Dimension preferredLayoutSize(Container target) {
 	return new Dimension(500, 500);
     }
-    public Dimension minimumLayoutSize(Container target) {
+    @Override
+	public Dimension minimumLayoutSize(Container target) {
 	return new Dimension(100,100);
     }
-    public void layoutContainer(Container target) {
+    @Override
+	public void layoutContainer(Container target) {
 	Insets insets = target.insets();
 	int targetw = target.size().width - insets.left - insets.right;
 	int cw = targetw* 8/10;

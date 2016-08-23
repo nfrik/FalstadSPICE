@@ -1,4 +1,4 @@
-import java.awt.*;
+
 import java.util.StringTokenizer;
 
 class DACElm extends ChipElm {
@@ -7,9 +7,12 @@ class DACElm extends ChipElm {
 		  StringTokenizer st) {
 	super(xa, ya, xb, yb, f, st);
     }
-    String getChipName() { return "DAC"; }
-    boolean needsBits() { return true; }
-    void setupPins() {
+    @Override
+	String getChipName() { return "DAC"; }
+    @Override
+	boolean needsBits() { return true; }
+    @Override
+	void setupPins() {
 	sizeX = 2;
 	sizeY = bits > 2 ? bits : 2;
 	pins = new Pin[getPostCount()];
@@ -21,7 +24,8 @@ class DACElm extends ChipElm {
 	pins[bits+1] = new Pin(sizeY-1, SIDE_E, "V+");
 	allocNodes();
     }
-    void doStep() {
+    @Override
+	void doStep() {
 	int ival = 0;
 	int i;
 	for (i = 0; i != bits; i++)
@@ -31,8 +35,11 @@ class DACElm extends ChipElm {
 	double v = ival*volts[bits+1]/ivalmax;
 	sim.updateVoltageSource(0, nodes[bits], pins[bits].voltSource, v);
     }
-    int getVoltageSourceCount() { return 1; }
-    int getPostCount() { return bits+2; }
-    int getDumpType() { return 166; }
+    @Override
+	int getVoltageSourceCount() { return 1; }
+    @Override
+	int getPostCount() { return bits+2; }
+    @Override
+	int getDumpType() { return 166; }
 }
     

@@ -1,4 +1,6 @@
-import java.awt.*;
+
+import java.awt.Color;
+import java.awt.Graphics;
 import java.util.StringTokenizer;
 
     class SevenSegElm extends ChipElm {
@@ -7,8 +9,10 @@ import java.util.StringTokenizer;
 			   StringTokenizer st) {
 	    super(xa, ya, xb, yb, f, st);
 	}
+	@Override
 	String getChipName() { return "7-segment driver/display"; }
 	Color darkred;
+	@Override
 	void setupPins() {
 	    darkred = new Color(30, 0, 0);
 	    sizeX = 4;
@@ -22,6 +26,7 @@ import java.util.StringTokenizer;
 	    pins[5] = new Pin(2, SIDE_S, "f");
 	    pins[6] = new Pin(3, SIDE_S, "g");
 	}
+	@Override
 	void draw(Graphics g) {
 	    drawChip(g);
 	    g.setColor(Color.red);
@@ -46,7 +51,10 @@ import java.util.StringTokenizer;
 	    g.setColor(pins[p].value ? Color.red :
 		       sim.printableCheckItem.getState() ? Color.white : darkred);
 	}
+	@Override
 	int getPostCount() { return 7; }
+	@Override
 	int getVoltageSourceCount() { return 0; }
+	@Override
 	int getDumpType() { return 157; }
     }

@@ -3209,7 +3209,7 @@ MouseMotionListener, MouseListener, ItemListener {
 	}
 
 	void setGrid() {
-		gridSize = (smallGridCheckItem.getState()) ? 8 : 16;
+		gridSize = (smallGridCheckItem.getState()) ? 1 : 16;
 		gridMask = ~(gridSize-1);
 		gridRound = gridSize/2-1;
 	}

@@ -1,7 +1,11 @@
 /**
  * Created by nfrik on 8/31/16.
  */
+
+
 public class IMQPConnectionTest {
+
+    IMQPConnection sdf;
 
     void testSend(){
         IMQPConnection.getInstance().sendToQueue("Hello");

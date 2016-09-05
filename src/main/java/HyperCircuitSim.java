@@ -121,7 +121,7 @@ public class HyperCircuitSim {
     Scrollbar currentBar;
     Label powerLabel;
     Scrollbar powerBar;
-    int hintType = -1,hintItem1,hintItem2;
+    int hintType = -1, hintItem1, hintItem2;
 
     int circuitMatrixSize, circuitMatrixFullSize;
 
@@ -639,6 +639,12 @@ public class HyperCircuitSim {
                 for (i = 0; i != elmList.size(); i++) {
                     CircuitElm ce = getElm(i);
                     ce.doStep();
+                    ce.calculateCurrent();
+                    if ((ce.getDumpClass().getName().compareTo("ResistorElm") == 0)) {
+                        if (((ResistorElm) ce).resistance == 10.0) {
+                            System.out.println(ce.dump() + " voltage: " + ce.getVoltageDiff() + " current: " + ce.getCurrent());
+                        }
+                    }
                 }
                 if (stopMessage != null)
                     return;
@@ -680,7 +686,7 @@ public class HyperCircuitSim {
                         res = ri.value;
                     else
                         res = circuitRightSide[ri.mapCol];
-					/*System.out.println(j + " " + res + " " +
+                    /*System.out.println(j + " " + res + " " +
 		      ri.type + " " + ri.mapCol);*/
                     if (Double.isNaN(res)) {
                         converged = false;

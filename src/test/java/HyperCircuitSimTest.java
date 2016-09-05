@@ -6,7 +6,7 @@ public class HyperCircuitSimTest {
     public static void main(String[] args) {
         HyperCircuitSim hcs = new HyperCircuitSim();
         hcs.init(null);
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 100; i++)
             hcs.updateCircuit();
     }
 }

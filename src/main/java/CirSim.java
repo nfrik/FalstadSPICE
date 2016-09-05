@@ -263,7 +263,7 @@ MouseMotionListener, MouseListener, ItemListener {
 		boolean printable = false;
 		boolean convention = true;
 
-		CircuitElm.initClass(this);
+//		CircuitElm.initClass(this);
 
 		try {
 			baseURL = applet.getDocumentBase().getFile();

@@ -18,7 +18,7 @@ import java.util.StringTokenizer;
 	    maxOut = 15;
 	    minOut = -15;
 	    gbw = 1e6;
-	    setSize(sim.smallGridCheckItem.getState() ? 1 : 2);
+	    setSize(true ? 1 : 2);
 	    setGain();
 	}
 	public OpAmpElm(int xa, int ya, int xb, int yb, int f,

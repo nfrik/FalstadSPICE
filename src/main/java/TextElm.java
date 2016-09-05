@@ -78,7 +78,7 @@ class TextElm extends CircuitElm {
 	for (i = 0; i != lines.size(); i++) {
 	    String s = (String) (lines.elementAt(i));
 	    if ((flags & FLAG_CENTER) != 0)
-		x = (sim.winSize.width-fm.stringWidth(s))/2;
+		x = (100-fm.stringWidth(s))/2;
 	    g.drawString(s, x, cury);
 	    if ((flags & FLAG_BAR) != 0) {
 		int by = cury-fm.getAscent();

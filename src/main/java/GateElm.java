@@ -13,7 +13,7 @@ import java.util.StringTokenizer;
 	    super(xx, yy);
 	    noDiagonal = true;
 	    inputCount = 2;
-	    setSize(sim.smallGridCheckItem.getState() ? 1 : 2);
+	    setSize(true ? 1 : 2);
 	}
 	public GateElm(int xa, int ya, int xb, int yb, int f,
 			StringTokenizer st) {

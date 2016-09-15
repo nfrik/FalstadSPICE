@@ -5,8 +5,8 @@ public class HyperCircuitSimTest {
 
     public static void main(String[] args) {
         HyperCircuitSim hcs = new HyperCircuitSim();
-        hcs.init(null);
-        for (int i = 0; i < 100; i++)
+        hcs.init("lrc.txt");
+        for (int i = 0; i < 500; i++)
             hcs.updateCircuit();
     }
 }

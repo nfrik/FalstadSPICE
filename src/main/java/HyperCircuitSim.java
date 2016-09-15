@@ -231,7 +231,7 @@ public class HyperCircuitSim {
 
         random = new Random();
 
-        getSetupList(circuitsMenu, false);
+//        getSetupList(circuitsMenu, false);
 
         // Init SaveOpenDialog
 //        saveOpenDialog = new SaveOpenDialog(this);
@@ -350,11 +350,12 @@ public class HyperCircuitSim {
         if (useFrame)
 //            setMenuBar(mb);
             if (initCircuit != null) {
-                loadStartup(initCircuit);
+//                loadStartup(initCircuit);
+                readSetupFile(initCircuit);
             } else if (startCircuitText != null)
                 readSetup(startCircuitText);
             else if (stopMessage == null && startCircuit != null)
-                readSetupFile(startCircuit, startLabel);
+                readSetupFile(startCircuit);
 
         // Set current "saved" circuit
 //        savedCircuit = dumpCircuit();
@@ -412,7 +413,7 @@ public class HyperCircuitSim {
         return readSetup(text.getBytes(), text.length(), retain);
     }
 
-    void readSetupFile(String str, String title) {
+    void readSetupFile(String str) {
         t = 0;
         System.out.println(str);
         try {

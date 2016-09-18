@@ -1,12 +1,4 @@
-
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Polygon;
-import java.awt.Rectangle;
-import java.text.DecimalFormat;
+import java.awt.*;
 import java.text.NumberFormat;
 
 /*
@@ -184,7 +176,7 @@ public abstract class CircuitElm implements Editable {
         int xpd = b.x - a.x;
         int ypd = b.y - a.y;
     /*double q = (a.x*(1-f)+b.x*f+.48);
-	  System.out.println(q + " " + (int) q);*/
+      System.out.println(q + " " + (int) q);*/
         c.x = (int) Math.floor(a.x * (1 - f) + b.x * f + .48);
         c.y = (int) Math.floor(a.y * (1 - f) + b.y * f + .48);
     }
@@ -235,7 +227,7 @@ public abstract class CircuitElm implements Editable {
     }
 
     void drawDots(Graphics g, Point pa, Point pb, double pos) {
-        if (sim.stoppedCheck || pos == 0 )
+        if (sim.stoppedCheck || pos == 0)
             return;
         int dx = pb.x - pa.x;
         int dy = pb.y - pa.y;

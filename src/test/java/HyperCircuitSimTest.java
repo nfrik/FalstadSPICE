@@ -5,8 +5,9 @@ public class HyperCircuitSimTest {
 
     public static void main(String[] args) {
         HyperCircuitSim hcs = new HyperCircuitSim();
-        hcs.init("lrc.txt");
+        hcs.init("my_divider.cmf");
         for (int i = 0; i < 500; i++)
             hcs.updateCircuit();
+
     }
 }

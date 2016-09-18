@@ -621,6 +621,7 @@ public class HyperCircuitSim {
             return;
         for (iter = 1; ; iter++) {
             int i, j, k, subiter;
+            //Perform iteration
             for (i = 0; i != elmList.size(); i++) {
                 CircuitElm ce = getElm(i);
                 ce.startIteration();
@@ -643,7 +644,7 @@ public class HyperCircuitSim {
                     ce.calculateCurrent();
                     if ((ce.getDumpClass().getName().compareTo("ResistorElm") == 0)) {
                         if (((ResistorElm) ce).resistance == 10.0) {
-                            System.out.println(ce.dump() + " voltage: " + ce.getVoltageDiff() + " current: " + ce.getCurrent()+" t: "+t);
+                            System.out.println(ce.dump() + " voltage: " + ce.getVoltageDiff() + " current: " + ce.getCurrent() + " t: " + t);
                         }
                     }
                 }
@@ -688,7 +689,7 @@ public class HyperCircuitSim {
                     else
                         res = circuitRightSide[ri.mapCol];
                     /*System.out.println(j + " " + res + " " +
-		      ri.type + " " + ri.mapCol);*/
+              ri.type + " " + ri.mapCol);*/
                     if (Double.isNaN(res)) {
                         converged = false;
                         //debugprint = true;

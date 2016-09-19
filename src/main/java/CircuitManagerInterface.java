@@ -16,4 +16,6 @@ public interface CircuitManagerInterface {
     public void setCircuitOutputVoltages(double[] var);
 
     public double[] getCircuitControlParameters(String var);
+
+    public MeasurementResult performMeasurement(double dt, double tolerance);
 }

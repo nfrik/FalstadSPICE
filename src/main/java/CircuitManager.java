@@ -62,4 +62,9 @@ public class CircuitManager implements CircuitManagerInterface{
         }
         return new double[var.length()];
     }
+
+    @Override
+    public MeasurementResult performMeasurement(double dt, double tolerance) {
+        return null;
+    }
 }

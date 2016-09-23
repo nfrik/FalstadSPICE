@@ -1,9 +1,11 @@
-
 import java.util.Vector;
 
 class CircuitNode {
     int x, y;
-    Vector links;
+    Vector<CircuitNodeLink> links;
     boolean internal;
-    CircuitNode() { links = new Vector(); }
+
+    CircuitNode() {
+        links = new Vector<CircuitNodeLink>();
+    }
 }

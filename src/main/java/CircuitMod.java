@@ -1,4 +1,3 @@
-
 import java.applet.Applet;
 import java.awt.Graphics;
 import java.awt.event.ComponentEvent;
@@ -6,12 +5,8 @@ import java.awt.event.ComponentListener;
 //import java.io.FileNotFoundException;
 //import java.io.PrintWriter;
 
-
 public class CircuitMod extends Applet implements ComponentListener {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
     static CirSim ogf;
 
@@ -50,7 +45,8 @@ public class CircuitMod extends Applet implements ComponentListener {
                     ogf.init(null);
                 }
 
-                // When program finishes initializing, dispose logo and show program frame.
+                // When program finishes initializing, dispose logo and show
+                // program frame.
                 // Make it so that the logo is shown at least 1.5 seconds.
                 long timeElapsed = (System.nanoTime() - time) / 1000000;
 
@@ -121,4 +117,3 @@ public class CircuitMod extends Applet implements ComponentListener {
         repaint();
     }
 };
-

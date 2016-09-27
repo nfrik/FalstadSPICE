@@ -643,7 +643,7 @@ public class HyperCircuitSim {
                     ce.doStep();
                     ce.calculateCurrent();
                     if ((ce.getDumpClass().getName().compareTo("ResistorElm") == 0)) {
-                        if (((ResistorElm) ce).resistance == 10.0) {
+                        if (((ResistorElm) ce).flags == 1) {
                             System.out.println(ce.dump() + " voltage: " + ce.getVoltageDiff() + " current: " + ce.getCurrent() + " t: " + t);
                         }
                     }

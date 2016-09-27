@@ -17,5 +17,5 @@ public interface CircuitManagerInterface {
 
     public double[] getCircuitControlParameters(String var);
 
-    public MeasurementResult performMeasurement(double dt, double tolerance);
+    public MeasurementResult runMeasurement(double period_t, double tail_t, double[] var);
 }

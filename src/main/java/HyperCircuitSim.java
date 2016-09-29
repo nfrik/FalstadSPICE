@@ -5,59 +5,23 @@
 
 // For information about the theory behind this, see Electronic Circuit & System Simulation Methods by Pillage
 
-import java.awt.Button;
-import java.awt.Checkbox;
 import java.awt.CheckboxMenuItem;
 import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Event;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
 import java.awt.Label;
 import java.awt.Menu;
-import java.awt.MenuBar;
-import java.awt.MenuItem;
-import java.awt.MenuShortcut;
 import java.awt.Point;
 import java.awt.PopupMenu;
 import java.awt.Rectangle;
 import java.awt.Scrollbar;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.InputEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FilterInputStream;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
-
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.UnsupportedLookAndFeelException;
 
 public class HyperCircuitSim {
 
@@ -136,6 +100,22 @@ public class HyperCircuitSim {
     int gridSize, gridMask, gridRound;
 
     CircuitElm plotXElm, plotYElm;
+
+    CircuitManager circuitManager;
+
+    private boolean doPeek;
+
+    public boolean isDoPeek() {
+        return doPeek;
+    }
+
+    public void setDoPeek(boolean doPeek) {
+        this.doPeek = doPeek;
+    }
+
+    public HyperCircuitSim(CircuitManager cm){
+        this.circuitManager = cm;
+    }
 
     int getrand(int x) {
         int q = random.nextInt();
@@ -642,11 +622,24 @@ public class HyperCircuitSim {
                     CircuitElm ce = getElm(i);
                     ce.doStep();
                     ce.calculateCurrent();
-                    if ((ce.getDumpClass().getName().compareTo("ResistorElm") == 0)) {
-                        if (((ResistorElm) ce).flags == 1) {
-                            System.out.println(ce.dump() + " voltage: " + ce.getVoltageDiff() + " current: " + ce.getCurrent() + " t: " + t);
-                        }
+                    if(isDoPeek()){
+                        circuitManager.peekCircuitParameters(ce);
                     }
+//                    if(doPeek){
+//
+//                        //doPeek on input values
+//
+//                        //doPeek on output values
+//
+//
+//
+//                        if ((ce.getDumpClass().getName().compareTo("ResistorElm") == 0)) {
+//                            if (((ResistorElm) ce).flags == 1) {
+//                                System.out.println(ce.dump() + " voltage: " + ce.getVoltageDiff() + " current: " + ce.getCurrent() + " t: " + t);
+//                            }
+//                        }
+//                    }
+
                 }
                 if (stopMessage != null)
                     return;
@@ -717,6 +710,9 @@ public class HyperCircuitSim {
                 break;
             }
             t += timeStep;
+            if(isDoPeek()){
+                circuitManager.peekTime(t);
+            }
             for (i = 0; i != scopeCount; i++)
                 scopes[i].timeStep();
             tm = System.currentTimeMillis();

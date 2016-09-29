@@ -1,3 +1,6 @@
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by NF on 9/17/2016.
  */
@@ -15,7 +18,14 @@ public interface CircuitManagerInterface {
 
     public void setCircuitOutputVoltages(double[] var);
 
-    public double[] getCircuitControlParameters(String var);
+    public Map<String,Integer> getCircuitControlParameters(String var);
+
+    public void peekCircuitParameters(CircuitElm ce);
+
+    public void peekTime(double t);
 
     public MeasurementResult runMeasurement(double period_t, double tail_t, double[] var);
+
+    public Double getResultGrade();
+
 }

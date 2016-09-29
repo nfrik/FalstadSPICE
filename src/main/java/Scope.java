@@ -45,6 +45,7 @@ class Scope {
         sim = s;
     }
 
+
     void showCurrent(boolean b) {
         showI = b;
         value = ivalue = 0;
@@ -140,10 +141,6 @@ class Scope {
                 maxI[ptr] = i;
         }
 
-        //stream to rabbitmq
-        if (streamOutput) {
-            IMQPConnection.getInstance().sendToQueue("Hello World!");
-        }
 
         if (plot2d && dpixels != null) {
             boolean newscale = false;

@@ -4,7 +4,7 @@ import java.util.Map;
 /**
  * Created by NF on 9/17/2016.
  */
-public interface CircuitManagerInterface {
+public interface CircuitManagerI {
 
     public double[] getCircuitControlVoltages();
 
@@ -18,7 +18,7 @@ public interface CircuitManagerInterface {
 
     public void setCircuitOutputVoltages(double[] var);
 
-    public Map<String,Integer> getCircuitControlParameters(String var);
+    public Map<String,CircuitControlElement> getCircuitControlParametersMap();
 
     public void peekCircuitParameters(CircuitElm ce);
 
@@ -26,6 +26,11 @@ public interface CircuitManagerInterface {
 
     public MeasurementResult runMeasurement(double period_t, double tail_t, double[] var);
 
-    public Double getResultGrade();
+    public void equilibrate(Double eps);
+
+    public void setInputOn(boolean on);
+
+    public Double getResultScore();
+
 
 }

@@ -15,13 +15,16 @@ public class HyperCircuitSimTest {
         //enable peeking on circuit data
         hcs.setDoPeek(true);
 
-        for (int i = 0; i < 10; i++)
+        cm.setInputOn(true);
+        for (int i = 0; i < 10; i++) {
             hcs.updateCircuit();
+            cm.equilibrate(0.1);
+        }
 
         //disable peeking
         hcs.setDoPeek(false);
 
         //Obtain grade of the circuit result where 1.0 is excellent and 0.0 is bad
-        System.out.println("Result grade: "+cm.getResultGrade());
+        System.out.println("Result grade: "+cm.getResultScore());
     }
 }

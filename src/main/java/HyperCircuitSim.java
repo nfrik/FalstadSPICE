@@ -115,6 +115,7 @@ public class HyperCircuitSim {
 
     public HyperCircuitSim(CircuitManager cm){
         this.circuitManager = cm;
+        this.circuitManager.initClass(this);
     }
 
     int getrand(int x) {

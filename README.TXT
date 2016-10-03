@@ -13,4 +13,6 @@ We will use flag filed as follows:
         0 - Not a part of control elements
   1 -  99 - Input channels (wire=w) (note! we can't use 0 flag since multiple wires are used in the circuit)
 199 - 199 - Control voltages (voltage source = R )
-200 - 299 - Output channels (wire=w)
+200 - 299 - Result output channels (wire=w)
+300 - 399 - Internal circuit switches (switch=s)
+400 - 401 - DUT (device under test) outputs. I.e. outputs from device itself. (wire=w)

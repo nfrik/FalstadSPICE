@@ -18,7 +18,9 @@ public interface CircuitManagerI {
 
     public void setCircuitOutputVoltages(double[] var);
 
-    public Map<String,CircuitControlElement> getCircuitControlParametersMap();
+//    public Map<String,CircuitControlElement> getCircuitControlParametersMap();
+
+    public Map<String,List<CircuitElm>> getCircuitControlParametersMap();
 
     public void peekCircuitParameters(CircuitElm ce);
 
@@ -26,7 +28,7 @@ public interface CircuitManagerI {
 
     public MeasurementResult runMeasurement(double period_t, double tail_t, double[] var);
 
-    public void equilibrate(Double eps);
+    public void waitForEquilibrium(Double eps);
 
     public void setInputOn(boolean on);
 

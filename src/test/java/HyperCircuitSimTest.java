@@ -18,7 +18,7 @@ public class HyperCircuitSimTest {
         cm.setInputOn(true);
         for (int i = 0; i < 10; i++) {
             hcs.updateCircuit();
-            cm.equilibrate(0.1);
+            cm.waitForEquilibrium(0.1);
         }
 
         //disable peeking

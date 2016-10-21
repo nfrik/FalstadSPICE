@@ -20,7 +20,7 @@ public interface CircuitManagerI {
 
 //    public Map<String,CircuitControlElement> getCircuitControlParametersMap();
 
-    public Map<String,List<CircuitElm>> getCircuitControlParametersMap();
+    public Map<String,Map<String,CircuitElm>> getCircuitControlParametersMap();
 
     public void peekCircuitParameters(CircuitElm ce);
 

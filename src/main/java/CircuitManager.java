@@ -1,6 +1,3 @@
-import com.google.common.collect.ImmutableMap;
-
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -82,22 +79,14 @@ public class CircuitManager implements CircuitManagerI {
         private String  elementName;
     }
 
-    private static Map<String,ControlElement> controlsFlagBoundaryMap = new HashMap<String,ControlElement>();
-
-    //private static Map<String,String> controlsNameToElmMap = new HashMap<String,String>();
+    private static Map<String,ControlElement> controlsMap = new HashMap<String,ControlElement>();
 
     {
-        controlsFlagBoundaryMap.put(INPUT,new ControlElement(INPUT_MIN,INPUT_MAX,WIRE_ELM));
-        controlsFlagBoundaryMap.put(COMPARATOR_OUTPUT,new ControlElement(COMPARATOR_OUTPUT_MIN,COMPARATOR_OUTPUT_MAX,WIRE_ELM));
-        controlsFlagBoundaryMap.put(DOT_OUTPUT,new ControlElement(DOT_OUTPUT_MIN,DOT_OUTPUT_MAX,WIRE_ELM));
-        controlsFlagBoundaryMap.put(CONTROL,new ControlElement(CONTROL_MIN, CONTROL_MAX, RAIL_ELM));
-        controlsFlagBoundaryMap.put(SWITCH,new ControlElement(SWITCH_MIN,SWITCH_MAX,SWITCH_ELM));
-
-//        controlsNameToElmMap.put(INPUT,WIRE_ELM);
-//        controlsNameToElmMap.put(COMPARATOR_OUTPUT,WIRE_ELM);
-//        controlsNameToElmMap.put(DOT_OUTPUT,WIRE_ELM);
-//        controlsNameToElmMap.put(CONTROL,RAIL_ELM);
-//        controlsNameToElmMap.put(SWITCH,SWITCH_ELM);
+        controlsMap.put(INPUT,new ControlElement(INPUT_MIN,INPUT_MAX,WIRE_ELM));
+        controlsMap.put(COMPARATOR_OUTPUT,new ControlElement(COMPARATOR_OUTPUT_MIN,COMPARATOR_OUTPUT_MAX,WIRE_ELM));
+        controlsMap.put(DOT_OUTPUT,new ControlElement(DOT_OUTPUT_MIN,DOT_OUTPUT_MAX,WIRE_ELM));
+        controlsMap.put(CONTROL,new ControlElement(CONTROL_MIN, CONTROL_MAX, RAIL_ELM));
+        controlsMap.put(SWITCH,new ControlElement(SWITCH_MIN,SWITCH_MAX,SWITCH_ELM));
     }
 
     public CircuitManager() {
@@ -155,83 +144,24 @@ public class CircuitManager implements CircuitManagerI {
 
     @Override
     /*Scan all elements in the circuit and map*/
-    public Map<String, List<CircuitElm>> getCircuitControlParametersMap() {
+    public Map<String, Map<String,CircuitElm>> getCircuitControlParametersMap() {
 
         Map<String, Map<String,CircuitElm>> pars = new HashMap<String, Map<String,CircuitElm>>();
 
+        for(String control: controlsMap.keySet()){
+            pars.put(control,new HashMap<String, CircuitElm>());
+        }
+
         for (int i = 0; i != sim.elmList.size(); i++) {
             CircuitElm ce = sim.getElm(i);
-
-//            for(String cont : controlsFlagBoundaryMap.keySet()){
-//                String elmStr = ce.getDumpClass().getName();
-//                controlsFlagBoundaryMap.get
-//            }
-
-//            switch(ce.getDumpClass().getName()){
-//                case WIRE_ELM: /*check input or output wire*/  break;
-//                case RAIL_ELM: /*check control rails or not*/ break;
-//                case SWITCH_ELM: /*check if the switch we want*/ break;
-//            }
-
-
             int flag = ce.flags;
-            for(String control : controlsFlagBoundaryMap.keySet()){
+            for(String control : controlsMap.keySet()){
 
-                if(ce.getDumpClass().getName().equals(controlsFlagBoundaryMap.get(control).getElementName())){
-                    if((flag >= controlsFlagBoundaryMap.get(control).getBoundaryMin()) && (flag <= controlsFlagBoundaryMap.get(control).getBoundaryMax())){
+                if(ce.getDumpClass().getName().equals(controlsMap.get(control).getElementName())){
+                    if((flag >= controlsMap.get(control).getBoundaryMin()) && (flag <= controlsMap.get(control).getBoundaryMax())){
                         String key = control + flag;
                         Integer val;
-                        if(!pars.containsKey(control)){
-                            pars.put(key,new ArrayList<CircuitElm>());
-                        }
-                    }
-                }
-            }
-
-            if (ce.getDumpClass().getName().equals(WIRE_ELM) ) {
-                int flag = ce.flags;
-                //check for input
-                if ((flag >= INPUT_MIN) && (flag <= INPUT_MAX)) {
-                    String key = INPUT + flag;
-                    Integer val = flag;
-                    if (!pars.containsKey(key)) {
-                        pars.put(key,new ArrayList<CircuitElm>());
-//                      pars.put(key, new CircuitControlElement(val, i));
-                    }
-
-                } else if ((flag >= COMPARATOR_OUTPUT_MIN) && (flag <= COMPARATOR_OUTPUT_MAX)) {
-                    String key = COMPARATOR_OUTPUT + flag;
-                    Integer val = flag;
-                    if (!pars.containsKey(key)) {
-                        pars.put(key, new CircuitControlElement(val, i));
-                    }
-                } else if ((flag >= DOT_OUTPUT_MIN) && (flag <= DOT_OUTPUT_MAX)) {
-                    String key = DOT_OUTPUT + flag;
-                    Integer val = flag;
-                    if (!pars.containsKey(key)) {
-                        pars.put(key, new CircuitControlElement(val, i));
-                    }
-                }
-
-
-            } else if (ce.getDumpClass().getName().equals(RAIL_ELM)) {
-                int flag = ((RailElm) ce).flags;
-                //check control voltages
-                if ((flag >= CONTROL_MIN) && (flag <= CONTROL_MAX)) {
-                    String key = CONTROL + flag;
-                    Integer val = flag;
-                    if (!pars.containsKey(key)) {
-                        pars.put(key, new CircuitControlElement(val, i));
-                    }
-                }
-            } else if (ce.getDumpClass().getName().equals(SWITCH_ELM)) {
-                //check for switch
-                int flag = ((SwitchElm) ce).flags;
-                if ((flag >= SWITCH_MIN) && (flag <= SWITCH_MAX)) {
-                    String key = SWITCH + flag;
-                    Integer val = flag;
-                    if (!pars.containsKey(key)) {
-                        pars.put(key, new CircuitControlElement(val, i));
+                        pars.get(control).put(key,ce);
                     }
                 }
             }
@@ -239,77 +169,6 @@ public class CircuitManager implements CircuitManagerI {
         return pars;
     }
 
-    /*Scan all elements in the circuit and map*/
-    public Map<String, List<CircuitControlElement>> getCircuitControlParametersMap2() {
-
-        if (circuitControlElementMap != null) {
-            return circuitControlElementMap;
-        }
-
-        Map<String, CircuitControlElement> pars = new HashMap<String, CircuitControlElement>();
-
-        for (int i = 0; i != sim.elmList.size(); i++) {
-            CircuitElm ce = sim.getElm(i);
-
-//            for(String cont : controlsFlagBoundaryMap.keySet()){
-//                String elmStr = ce.getDumpClass().getName();
-//                controlsFlagBoundaryMap.get
-//            }
-
-//            switch(ce.getDumpClass().getName()){
-//                case WIRE_ELM: /*check input or output wire*/  break;
-//                case RAIL_ELM: /*check control rails or not*/ break;
-//                case SWITCH_ELM: /*check if the switch we want*/ break;
-//            }
-
-            if ((ce.getDumpClass().getName().compareTo(WIRE_ELM) == 0)) {
-                int flag = ((WireElm) ce).flags;
-                //check for input
-                if ((flag >= INPUT_MIN) && (flag <= INPUT_MAX)) {
-                    String key = INPUT + flag;
-                    Integer val = flag;
-                    if (!pars.containsKey(key)) {
-                        pars.put(key, new CircuitControlElement(val, i));
-                    }
-                } else if ((flag >= COMPARATOR_OUTPUT_MIN) && (flag <= COMPARATOR_OUTPUT_MAX)) {
-                    String key = COMPARATOR_OUTPUT + flag;
-                    Integer val = flag;
-                    if (!pars.containsKey(key)) {
-                        pars.put(key, new CircuitControlElement(val, i));
-                    }
-                } else if ((flag >= DOT_OUTPUT_MIN) && (flag <= DOT_OUTPUT_MAX)) {
-                    String key = DOT_OUTPUT + flag;
-                    Integer val = flag;
-                    if (!pars.containsKey(key)) {
-                        pars.put(key, new CircuitControlElement(val, i));
-                    }
-                }
-
-
-            } else if ((ce.getDumpClass().getName().compareTo(RAIL_ELM) == 0)) {
-                int flag = ((RailElm) ce).flags;
-                //check control voltages
-                if ((flag >= CONTROL_MIN) && (flag <= CONTROL_MAX)) {
-                    String key = CONTROL + flag;
-                    Integer val = flag;
-                    if (!pars.containsKey(key)) {
-                        pars.put(key, new CircuitControlElement(val, i));
-                    }
-                }
-            } else if ((ce.getDumpClass().getName().compareTo(SWITCH_ELM) == 0)) {
-                //check for switch
-                int flag = ((SwitchElm) ce).flags;
-                if ((flag >= SWITCH_MIN) && (flag <= SWITCH_MAX)) {
-                    String key = SWITCH + flag;
-                    Integer val = flag;
-                    if (!pars.containsKey(key)) {
-                        pars.put(key, new CircuitControlElement(val, i));
-                    }
-                }
-            }
-        }
-        return pars;
-    }
 
     private Map<String, List<Double>> resultMap;
 
@@ -377,13 +236,15 @@ public class CircuitManager implements CircuitManagerI {
 
         setInputOn(false);
 
-        CircuitElm outputElm = sim.getElm(getCircuitControlParametersMap().get(DOT_OUTPUT+400).getNumber());
+        List<CircuitElm> outElemsList = new ArrayList<CircuitElm>(getCircuitControlParametersMap().get(DOT_OUTPUT).values());
 
-        Double oldValue = outputElm.getVoltageDiff();
+//        CircuitElm outputElm = getCircuitControlParametersMap().get(DOT_OUTPUT);
+//        CircuitElm outputElm = sim.getElm(getCircuitControlParametersMap().get(DOT_OUTPUT+400).getNumber());
+        Double oldValue = outElemsList.get(outElemsList.size()-1).getVoltageDiff();
 
         while (oldValue > eps) {
             sim.updateCircuit();
-            oldValue = Math.abs(oldValue-outputElm.getVoltageDiff());
+            oldValue = Math.abs(oldValue-outElemsList.get(outElemsList.size()-1).getVoltageDiff());
         }
 
         setInputOn(true);
@@ -391,8 +252,9 @@ public class CircuitManager implements CircuitManagerI {
 
     @Override
     public void setInputOn(boolean on) {
-
-        SwitchElm ce = (SwitchElm) sim.getElm(getCircuitControlParametersMap().get(SWITCH + 301).getNumber());
+        List<CircuitElm> switchElemsList = new ArrayList<CircuitElm>(getCircuitControlParametersMap().get(SWITCH).values());
+        SwitchElm ce = (SwitchElm) switchElemsList.get(switchElemsList.size()-1);
+//        SwitchElm ce = (SwitchElm) sim.getElm(getCircuitControlParametersMap().get(SWITCH + 301).getNumber());
         if (on == true)
             ce.position = 0; //note 1 is off
         else

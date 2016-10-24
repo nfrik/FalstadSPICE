@@ -3,13 +3,13 @@ class Inductor {
     public static final int FLAG_BACK_EULER = 2;
     int nodes[];
     int flags;
-    HyperCircuitSim sim;
+    CirSim sim;
 
     double inductance;
     double compResistance, current;
     double curSourceValue;
 
-    Inductor(HyperCircuitSim s) {
+    Inductor(CirSim s) {
         sim = s;
         nodes = new int[2];
     }

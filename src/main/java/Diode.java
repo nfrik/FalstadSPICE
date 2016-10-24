@@ -1,10 +1,10 @@
 
 class Diode {
     int nodes[];
-    HyperCircuitSim sim;
+    CirSim sim;
 
     
-    Diode(HyperCircuitSim s) {
+    Diode(CirSim s) {
 	sim = s;
 	nodes = new int[2];
     }

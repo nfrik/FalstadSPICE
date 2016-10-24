@@ -23,19 +23,8 @@ import java.awt.Point;
 import java.awt.PopupMenu;
 import java.awt.Rectangle;
 import java.awt.Scrollbar;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.InputEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
+import java.awt.geom.AffineTransform;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FilterInputStream;
@@ -217,8 +206,20 @@ public class CirSim extends Frame implements ComponentListener, ActionListener,
 
     List<Image> iconList;
 
+    private double zoomScale = 1.;
+
     CirSim(CircuitMod a) {
         super();
+
+        addMouseWheelListener(new MouseAdapter() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                double delta = 0.05f * e.getPreciseWheelRotation();
+                zoomScale += delta;
+                cv.revalidate();
+                cv.repaint();
+            }
+        });
 
         // Set program name at startup
         setTitleNameStart();
@@ -951,27 +952,8 @@ public class CirSim extends Frame implements ComponentListener, ActionListener,
         } else
             lastTime = 0;
         CircuitElm.powerMult = Math.exp(powerBar.getValue() / 4.762 - 7);
-        float dashes[] = { 1.0f };
-        BasicStroke dashedStroke = new BasicStroke(0.0f, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 1.0f, dashes, 0.0f);
-        Graphics2D g2d = (Graphics2D) g.create();
-        g2d.setColor(gridColor);
-        BasicStroke oldStroke = (BasicStroke) g2d.getStroke();
-        for (int gx = 0; gx <= circuitArea.width; gx += gridSize) {
-            if (gx % 16 == 0)
-                g2d.setStroke(oldStroke);
-            else
-                g2d.setStroke(dashedStroke);
-            g2d.drawLine(gx, 0, gx, circuitArea.height - 5);
-        }
-        for (int gy = 0; gy <= circuitArea.height; gy += gridSize) {
-            if (gy % 16 == 0)
-                g2d.setStroke(oldStroke);
-            else
-                g2d.setStroke(dashedStroke);
-            g2d.drawLine(0, gy, circuitArea.width, gy);
-        }
-        g2d.dispose();
+
+
         int i;
         Font oldfont = g.getFont();
         for (i = 0; i != elmList.size(); i++) {
@@ -1091,6 +1073,16 @@ public class CirSim extends Frame implements ComponentListener, ActionListener,
 		 * "iterc: " + (getIterCount()), 10, 70);
 		 */
 
+        if(showGridCheckItem.getState()) {
+            paintGrid(g, gridColor);
+        }
+
+        Graphics2D g2dd = (Graphics2D) realg.create();
+        AffineTransform at = g2dd.getTransform();
+        at.scale(zoomScale,zoomScale);
+        g2dd.drawImage(dbimage,at,this);
+        g2dd.dispose();
+
         realg.drawImage(dbimage, 0, 0, this);
         if (!stoppedCheck.getState() && circuitMatrix != null) {
             // Limit to 50 fps (thanks to Jürgen Klötzer for this)
@@ -1107,6 +1099,31 @@ public class CirSim extends Frame implements ComponentListener, ActionListener,
             cv.repaint(0);
         }
         lastFrameTime = lastTime;
+    }
+
+
+    private void paintGrid(Graphics g, Color gridColor) {
+        float dashes[] = { 1.0f };
+        BasicStroke dashedStroke = new BasicStroke(0.0f, BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER, 1.0f, dashes, 0.0f);
+        Graphics2D g2d = (Graphics2D) g.create();
+        g2d.setColor(gridColor);
+        BasicStroke oldStroke = (BasicStroke) g2d.getStroke();
+        for (int gx = 0; gx <= circuitArea.width; gx += gridSize) {
+            if (gx % 16 == 0)
+                g2d.setStroke(oldStroke);
+            else
+                g2d.setStroke(dashedStroke);
+            g2d.drawLine(gx, 0, gx, circuitArea.height - 5);
+        }
+        for (int gy = 0; gy <= circuitArea.height; gy += gridSize) {
+            if (gy % 16 == 0)
+                g2d.setStroke(oldStroke);
+            else
+                g2d.setStroke(dashedStroke);
+            g2d.drawLine(0, gy, circuitArea.width, gy);
+        }
+        g2d.dispose();
     }
 
     void setupScopes() {
@@ -2590,7 +2607,8 @@ public class CirSim extends Frame implements ComponentListener, ActionListener,
         try {
             if (applet != null)
                 return applet.getCodeBase();
-            File f = new File(System.getProperty("java.class.path"));
+//            File f = new File(System.getProperty("java.class.path"));
+            File f = new File(".");
             File dir = f.getAbsoluteFile().getParentFile();
             String path = dir.toString();
             return new URL("file:" + path + "/");

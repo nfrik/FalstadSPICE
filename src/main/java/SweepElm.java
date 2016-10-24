@@ -62,7 +62,7 @@ class SweepElm extends CircuitElm {
 	if (tm > 1000)
 	    tm = 2000-tm;
 	double w = 1+tm*.002;
-	if (!sim.stoppedCheck)
+	if (!sim.stoppedCheck.getState())
 	    w = 1+2*(frequency-minF)/(maxF-minF);
 	for (i = -xl; i <= xl; i++) {
 	    int yy = yc+(int) (.95*Math.sin(i*pi*w/xl)*wl);

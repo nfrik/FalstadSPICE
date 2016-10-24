@@ -103,16 +103,6 @@ public class HyperCircuitSim {
 
     CircuitManager circuitManager;
 
-    private boolean doPeek;
-
-    public boolean isDoPeek() {
-        return doPeek;
-    }
-
-    public void setDoPeek(boolean doPeek) {
-        this.doPeek = doPeek;
-    }
-
     public HyperCircuitSim(CircuitManager cm){
         this.circuitManager = cm;
         this.circuitManager.initClass(this);
@@ -623,9 +613,7 @@ public class HyperCircuitSim {
                     CircuitElm ce = getElm(i);
                     ce.doStep();
                     ce.calculateCurrent();
-                    if(isDoPeek()){
-                        circuitManager.peekCircuitParameters(ce);
-                    }
+                    circuitManager.peekCircuitParameters(ce);
 //                    if(doPeek){
 //
 //                        //doPeek on input values
@@ -711,9 +699,9 @@ public class HyperCircuitSim {
                 break;
             }
             t += timeStep;
-            if(isDoPeek()){
-                circuitManager.peekTime(t);
-            }
+
+            circuitManager.peekTime(t);
+
             for (i = 0; i != scopeCount; i++)
                 scopes[i].timeStep();
             tm = System.currentTimeMillis();

@@ -1,3 +1,6 @@
+import plot.PltSeries;
+import plot.PltXYScatter;
+
 import java.util.*;
 
 /**
@@ -39,6 +42,16 @@ public class CircuitManager implements CircuitManagerI {
     private static final String MIN = "MIN";
     private static final String MAX = "MAX";
     private static final String ELEMENT = "ELEMENT";
+
+    private boolean doPeek;
+
+    public boolean isDoPeek() {
+        return doPeek;
+    }
+
+    public void setDoPeek(boolean doPeek) {
+        this.doPeek = doPeek;
+    }
 
     class ControlElement{
 
@@ -88,6 +101,12 @@ public class CircuitManager implements CircuitManagerI {
         controlsMap.put(CONTROL,new ControlElement(CONTROL_MIN, CONTROL_MAX, RAIL_ELM));
         controlsMap.put(SWITCH,new ControlElement(SWITCH_MIN,SWITCH_MAX,SWITCH_ELM));
     }
+
+    public static List<String> getPeekElements() {
+        return peekElements;
+    }
+
+    private static List<String> peekElements = Arrays.asList(INPUT,DOT_OUTPUT,CONTROL,COMPARATOR_OUTPUT);
 
     public CircuitManager() {
 
@@ -170,39 +189,27 @@ public class CircuitManager implements CircuitManagerI {
     }
 
 
+    public Map<String, List<Double>> getResultMap() {
+        return resultMap;
+    }
+
     private Map<String, List<Double>> resultMap;
 
     @Override
     public void peekCircuitParameters(CircuitElm ce) {
 
-        if ((ce.getDumpClass().getName().compareTo(WIRE_ELM) == 0)) {
-            //check for input and output
-            if ((((WireElm) ce).flags >= 200) && (((WireElm) ce).flags <= 299)) {
-                String key = COMPARATOR_OUTPUT + ((WireElm) ce).flags;
-                Double val = ce.getVoltageDiff();
-                if (!resultMap.containsKey(key)) {
-                    resultMap.put(key, new ArrayList<Double>());
-                }
-                resultMap.get(key).add(val);
-            } else if (((((WireElm) ce).flags >= 1) && (((WireElm) ce).flags <= 99))) {
-                String key = INPUT + ((WireElm) ce).flags;
-                Double val = ce.getVoltageDiff();
-                if (!resultMap.containsKey(key)) {
-                    resultMap.put(key, new ArrayList<Double>());
-                }
-                resultMap.get(key).add(val);
-            }
+        int flag = ce.flags;
 
-
-        } else if ((ce.getDumpClass().getName().compareTo(RAIL_ELM) == 0)) {
-            //check control voltages
-            if ((((RailElm) ce).flags >= 100) && (((RailElm) ce).flags <= 199)) {
-                String key = CONTROL + ((RailElm) ce).flags;
-                Double val = ce.getVoltageDiff();
-                if (!resultMap.containsKey(key)) {
-                    resultMap.put(key, new ArrayList<Double>());
+        for(String peekElement : peekElements){
+            if(ce.getDumpClass().getName().equals(controlsMap.get(peekElement).getElementName())){
+                if((flag >= controlsMap.get(peekElement).getBoundaryMin()) && (flag <= controlsMap.get(peekElement).getBoundaryMax())){
+                    String key = peekElement + flag;
+                    Integer val;
+                    if(!resultMap.containsKey(key)){
+                        resultMap.put(key,new ArrayList<Double>());
+                    }
+                    resultMap.get(key).add(ce.getVoltageDiff());
                 }
-                resultMap.get(key).add(val);
             }
         }
 
@@ -210,10 +217,12 @@ public class CircuitManager implements CircuitManagerI {
 
     @Override
     public void peekTime(double t) {
-        if (!resultMap.containsKey(CIR_TIME)) {
-            resultMap.put(CIR_TIME, new ArrayList<Double>());
+        if(isDoPeek()) {
+            if (!resultMap.containsKey(CIR_TIME)) {
+                resultMap.put(CIR_TIME, new ArrayList<Double>());
+            }
+            resultMap.get(CIR_TIME).add(t);
         }
-        resultMap.get(CIR_TIME).add(t);
     }
 
     @Override
@@ -232,14 +241,16 @@ public class CircuitManager implements CircuitManagerI {
     }
 
     @Override
-    public void waitForEquilibrium(Double eps) {
+    public void waitForEquilibriumWithTolerance(Double eps) {
 
+        System.out.println("Waiting for equilibrium");
         setInputOn(false);
 
         List<CircuitElm> outElemsList = new ArrayList<CircuitElm>(getCircuitControlParametersMap().get(DOT_OUTPUT).values());
 
 //        CircuitElm outputElm = getCircuitControlParametersMap().get(DOT_OUTPUT);
 //        CircuitElm outputElm = sim.getElm(getCircuitControlParametersMap().get(DOT_OUTPUT+400).getNumber());
+
         Double oldValue = outElemsList.get(outElemsList.size()-1).getVoltageDiff();
 
         while (oldValue > eps) {
@@ -248,6 +259,8 @@ public class CircuitManager implements CircuitManagerI {
         }
 
         setInputOn(true);
+        System.out.println("Equilibrium reached");
+
     }
 
     @Override
@@ -268,16 +281,29 @@ public class CircuitManager implements CircuitManagerI {
         //1.0 is perfect 0.0 is worst
         Double grade = 0.;
         int i = 0;
-        if (resultMap.keySet().contains("Output201")) {
-            List<Double> temp = resultMap.get("Output201");
+        if (resultMap.keySet().contains(COMPARATOR_OUTPUT+201)) {
+            List<Double> temp = resultMap.get(COMPARATOR_OUTPUT+201);
             for (Double d : temp) {
                 grade += d;
             }
             grade = grade / temp.size();
+        }else{
+            System.out.println("Comparator was not found during score computation");
         }
 
         return grade;
     }
 
+    public void plotResults(){
+
+        List<Double> input = getResultMap().get(INPUT+3);
+        List<Double> time = getResultMap().get(CIR_TIME);
+
+        for(int i =0;i<input.size();i++){
+//            PltSeries.getInstance().plotYt(input.get(i),0);
+            PltXYScatter.getInstance().plotXY(time.get(i),input.get(i));
+        }
+
+    }
 
 }

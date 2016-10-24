@@ -28,7 +28,7 @@ public interface CircuitManagerI {
 
     public MeasurementResult runMeasurement(double period_t, double tail_t, double[] var);
 
-    public void waitForEquilibrium(Double eps);
+    public void waitForEquilibriumWithTolerance(Double eps);
 
     public void setInputOn(boolean on);
 

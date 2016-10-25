@@ -1083,7 +1083,7 @@ public class CirSim extends Frame implements ComponentListener, ActionListener,
         g2dd.drawImage(dbimage,at,this);
         g2dd.dispose();
 
-        realg.drawImage(dbimage, 0, 0, this);
+//        realg.drawImage(dbimage, 0, 0, this);
         if (!stoppedCheck.getState() && circuitMatrix != null) {
             // Limit to 50 fps (thanks to Jürgen Klötzer for this)
             long delay = 1000 / 50
